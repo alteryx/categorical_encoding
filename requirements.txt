@@ -1,0 +1,7 @@
+numpy>=1.13.3
+pandas>=0.23.0
+scikit-learn>=0.20.0,<0.21; python_version < '3'
+scikit-learn>=0.20.0; python_version >= '3'
+funcsigs>=1.0.2; python_version < '3'
+featuretools>=0.8.0
+patsy>=0.5.1
