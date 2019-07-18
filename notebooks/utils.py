@@ -2,6 +2,8 @@ import featuretools as ft
 import pandas as pd
 import numpy as np
 import os
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
 
 def load_entityset(data_dir):
     order_products = pd.read_csv(os.path.join(data_dir, "order_products__prior.csv"))
@@ -91,10 +93,6 @@ def make_labels(es, training_window, cutoff_time,
 
     return labels
 
-def dask_make_labels(es, **kwargs):
-    label_times = make_labels(es, **kwargs)
-    return label_times, es
-
 
 def calculate_feature_matrix(label_times, features):
     label_times, es = label_times
@@ -111,6 +109,7 @@ def calculate_feature_matrix(label_times, features):
 def merge_features_labels(fm, labels):
     return fm.reset_index().merge(labels)
 
+
 def feature_importances(model, features, n=10):
     importances = model.feature_importances_
     zipped = sorted(zip(features, importances), key=lambda x: -x[1])
@@ -118,3 +117,16 @@ def feature_importances(model, features, n=10):
         print("%d: Feature: %s, %.3f" % (i+1, f[0].get_name(), f[1]))
 
     return [f[0] for f in zipped[:n]]
+
+
+def machine_learning_score(fm_encoded, label_times):
+    X = merge_features_labels(fm_encoded, label_times)
+    X.drop(["user_id", "time"], axis=1, inplace=True)
+    X = X.fillna(0)
+    y = X.pop("label")
+    
+    clf = RandomForestClassifier(n_estimators=400, n_jobs=-1)
+    scores = cross_val_score(estimator=clf,X=X, y=y, cv=3,
+                             scoring="roc_auc", verbose=True)
+
+    return "AUC %.2f +/- %.2f" % (scores.mean(), scores.std())
