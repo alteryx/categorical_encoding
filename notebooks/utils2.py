@@ -2,9 +2,11 @@ import featuretools as ft
 import pandas as pd
 import numpy as np
 import os
-import xgboost
-from sklearn.model_selection import KFold, cross_val_score
+import xgboost as xgb
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.metrics import r2_score
+import category_encoders as ce
+import time
 
 def load_entityset():
     data_dir = "./data/"
@@ -129,11 +131,11 @@ def load_entityset():
 
 
 def bayesian_encoder_results(feature_matrix):
-    kf = KFold(n_splits=5)
+    kf = KFold(n_splits=3)
 
     X = feature_matrix.drop('visitors', axis=1)
     X = X.fillna(0)
-    y = feature_matrix_enc['visitors']
+    y = feature_matrix['visitors']
 
     bayesian_encoders = [ce.TargetEncoder(),
                          ce.LeaveOneOutEncoder(),
@@ -163,7 +165,7 @@ def bayesian_encoder_results(feature_matrix):
             dtest = xgb.DMatrix(X_test)
             preds = model.predict(dtest)
             
-            scores.append(metrics.r2_score(y_test, preds, multioutput='variance_weighted'))
+            scores.append(r2_score(y_test, preds, multioutput='variance_weighted'))
 
         scores = np.array(scores)
         score = "SCORE: %.2f +/- %.2f" % (scores.mean(), scores.std())
@@ -174,6 +176,34 @@ def bayesian_encoder_results(feature_matrix):
                                                     'Elapsed Time': time.time() - start_time},
                                                    ignore_index=True)
     return bayesian_results
+
+
+def classic_encoder_results(feature_matrix):
+    X = feature_matrix.drop('visitors', axis=1)
+    X = X.fillna(0)
+    y = feature_matrix['visitors']
+
+    classic_encoders = [ce.OrdinalEncoder(), ce.OneHotEncoder(), ce.BinaryEncoder(), ce.HashingEncoder()]
+    classic_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', 'Elapsed Time'])
+    for encoder in classic_encoders:
+        encoder_name = str(encoder)[:str(encoder).find('(')]
+        start_time = time.time()
+        
+        X_encoded = encoder.fit_transform(X)
+        
+        X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3)
+        model = create_xgb_model(X_train, X_test, y_train, y_test)
+        dtest = xgb.DMatrix(X_test)
+        preds = model.predict(dtest)
+        
+        score = "SCORE: %.2f" % (r2_score(y_test, preds, multioutput='variance_weighted'))
+
+        classic_results = classic_results.append({'Encoder': encoder_name,
+                                                  'Score': score,
+                                                  '# Columns': len(X_train.columns),
+                                                  'Elapsed Time': time.time() - start_time},
+                                                  ignore_index=True)
+    return classic_results
 
 
 def create_xgb_model(X_train, X_test, y_train, y_test):
