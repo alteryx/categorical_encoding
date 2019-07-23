@@ -131,8 +131,6 @@ def load_entityset():
 
 
 def bayesian_encoder_results(feature_matrix):
-    kf = KFold(n_splits=3)
-
     X = feature_matrix.drop('visitors', axis=1)
     X = X.fillna(0)
     y = feature_matrix['visitors']
@@ -146,34 +144,32 @@ def bayesian_encoder_results(feature_matrix):
     for encoder in bayesian_encoders:
         encoder_name = str(encoder)[:str(encoder).find('(')]
         start_time = time.time()
-        scores = []
         
-        for train_index, test_index in kf.split(X):
-            X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-            y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+        scores = []
+        for i in range(3):
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
             if encoder_name == 'WOEEncoder':
                 encoder.fit(X_train, 
                             y_train)
             else:
                 encoder.fit(X_train, y_train)
-            
-            X_train = encoder.transform(X_train)
-            X_test = encoder.transform(X_test)
-            
-            model = create_xgb_model(X_train, X_test, y_train, y_test)
-            dtest = xgb.DMatrix(X_test)
-            preds = model.predict(dtest)
-            
-            scores.append(r2_score(y_test, preds, multioutput='variance_weighted'))
 
+            X_train_encoded = encoder.transform(X_train)
+            X_test_encoded = encoder.transform(X_test)
+
+            model = create_xgb_model(X_train_encoded, X_test_encoded, y_train, y_test)
+            dtest = xgb.DMatrix(X_test_encoded)
+            preds = model.predict(dtest)
+            scores.append(r2_score(y_test, preds, multioutput='variance_weighted'))
+        
         scores = np.array(scores)
         score = "SCORE: %.2f +/- %.2f" % (scores.mean(), scores.std())
 
         bayesian_results = bayesian_results.append({'Encoder': encoder_name,
                                                     'Score': score,
                                                     '# Columns': len(X_train.columns),
-                                                    'Elapsed Time': time.time() - start_time},
+                                                    'Average Elapsed Time': (time.time() - start_time) / 3},
                                                    ignore_index=True)
     return bayesian_results
 
@@ -189,19 +185,23 @@ def classic_encoder_results(feature_matrix):
         encoder_name = str(encoder)[:str(encoder).find('(')]
         start_time = time.time()
         
-        X_encoded = encoder.fit_transform(X)
-        
-        X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3)
-        model = create_xgb_model(X_train, X_test, y_train, y_test)
-        dtest = xgb.DMatrix(X_test)
-        preds = model.predict(dtest)
-        
-        score = "SCORE: %.2f" % (r2_score(y_test, preds, multioutput='variance_weighted'))
+        scores = []
+        for i in range(3):
+            X_encoded = encoder.fit_transform(X)
+
+            X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3)
+            model = create_xgb_model(X_train, X_test, y_train, y_test)
+            dtest = xgb.DMatrix(X_test)
+            preds = model.predict(dtest)
+            scores.append(r2_score(y_test, preds, multioutput='variance_weighted'))
+
+        scores = np.array(scores)
+        score = "SCORE: %.2f +/- %.2f" % (scores.mean(), scores.std())
 
         classic_results = classic_results.append({'Encoder': encoder_name,
                                                   'Score': score,
                                                   '# Columns': len(X_train.columns),
-                                                  'Elapsed Time': time.time() - start_time},
+                                                  'Average Elapsed Time': (time.time() - start_time) / 3},
                                                   ignore_index=True)
     return classic_results
 
