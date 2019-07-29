@@ -8,9 +8,7 @@ from sklearn.metrics import r2_score
 import category_encoders as ce
 import time
 
-def load_entityset():
-    data_dir = "./data/"
-
+def load_entityset(data_dir):
     # We first load our data.
     air_reserve = pd.read_csv(os.path.join(data_dir, "air_reserve.csv"))
     hpg_reserve = pd.read_csv(os.path.join(data_dir, "hpg_reserve.csv"))
