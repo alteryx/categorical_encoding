@@ -222,7 +222,6 @@ def create_xgb_model(X_train, X_test, y_train, y_test):
     }
 
     model = xgb.train(params=params, dtrain=dtrain, num_boost_round=227,
-                    evals=evals, early_stopping_rounds=60, maximize=False,
-                    verbose_eval=100)
+                    evals=evals, early_stopping_rounds=60, maximize=False)
     
     return model
