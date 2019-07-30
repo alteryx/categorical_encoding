@@ -10,9 +10,8 @@ from category_encoders import (
 )
 # instead of using category_encoders, perhaps we should wrap it ourselves in order for method to work
 
-
 class Encoder():
-    def __init__(self, method=OneHotEncoder, to_encode=None):
+    def __init__(self, method=OneHotEncoder, to_encode=None, top_n=10):
         encoder_list = {'Ordinal': OrdinalEncoder,
                         'OneHot': OneHotEncoder,
                         'Binary': BinaryEncoder,
@@ -26,28 +25,43 @@ class Encoder():
                 
         self.method = method(cols=to_encode)
         self.features = []
+        # top_n only for OneHotEncoder
+        self.top_n = top_n
     
     def fit(self, X, features, y=None):
         self.features = features
         return self.method.fit(X, y)
 
     def transform(self, X):
+        feature_list = []
+        if isinstance(self.method, OneHotEncoder):
+            for f in self.features:
+                if f.get_name() in self.method.cols:
+                    val_counts = X[f.get_name()].value_counts().to_frame()
+                    val_counts.sort_values(f.get_name(), ascending=False)
+                    unique = val_counts.index.tolist()
+                    for label in unique:
+                        add = f == label
+                        feature_list.append(add)
+                else:
+                    feature_list.append(f)
+        else:
+            for f in self.features:
+                if f.get_name() in self.method.cols: # this isn't supporting multiple output features yet
+                    f = f.rename(f.get_name() + '_' + str(self.method)[:str(self.method).find('Encoder')].lower())
+                print(f)
+                feature_list.append(f)
+            
+        self.features = feature_list
+        
         return self.method.transform(X)
     
     def fit_transform(self, X, features, y=None):
         self.features = features
-        return self.fit(X=X, y=y, features=features).transform(X)
+        self.fit(X=X, y=y, features=features)
+        return self.transform(X)
     
     def get_features(self):
-        feature_list = []
-        if not isinstance(self.method, OneHotEncoder):
-            for f in self.features:
-                print(f.get_name())
-                if f.get_name() in self.method.cols:
-                    f = f.rename(f.get_name() + '_' + str(self.method)[:str(self.method).find('(')])
-                feature_list.append(f)
-        # else: need to handle how to append featurelist for onehot encoding
-        self.features = feature_list
         return self.features
     
 # potential challenge in calculate feature matrix from feature list
