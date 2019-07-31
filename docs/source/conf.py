@@ -18,18 +18,18 @@ import sys
 path = os.path.join('..', '..')
 sys.path.insert(0, os.path.abspath(path))
 
-import categorical-encoding
+import categorical_encoding
 
 # -- Project information -----------------------------------------------------
 
-project = 'Project Name'
+project = 'categorical-encoding'
 copyright = '2019, Feature Labs, Inc.'
 author = 'Feature Labs, Inc.'
 
 # The short X.Y version
-version = categorical-encoding.__version__
+version = categorical_encoding.__version__
 # The full version, including alpha/beta/rc tags
-release = categorical-encoding.__version__
+release = categorical_encoding.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -109,7 +109,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Project Namedoc'
+htmlhelp_basename = 'categorical-encodingdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -136,7 +136,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Project Name.tex', 'Project Name Documentation',
+    (master_doc, 'categorical-encoding.tex', 'categorical-encoding Documentation',
      'Feature Labs, Inc.', 'manual'),
 ]
 
@@ -146,7 +146,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'categorical-encoding', 'Project Name Documentation',
+    (master_doc, 'categorical_encoding', 'categorical-encoding Documentation',
      [author], 1)
 ]
 
@@ -157,8 +157,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Project Name', 'Project Name Documentation',
-     author, 'Project Name', 'One line description of project.',
+    (master_doc, 'categorical-encoding', 'categorical-encoding Documentation',
+     author, 'categorical-encoding', 'One line description of project.',
      'Miscellaneous'),
 ]
 

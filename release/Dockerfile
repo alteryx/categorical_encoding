@@ -5,7 +5,7 @@ LABEL "com.github.actions.description"="Upload the release to PyPI when publishe
 LABEL "com.github.actions.icon"="package"
 LABEL "com.github.actions.color"="blue"
 
-LABEL "repository"="https://github.com/FeatureLabs/categorical-encoding"
+LABEL "repository"="https://github.com/FeatureLabs/categorical_encoding"
 LABEL "maintainer"="support@featurelabs.com"
 
 ADD upload.sh /upload.sh

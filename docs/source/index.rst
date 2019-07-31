@@ -18,5 +18,5 @@
     changelog
 
 ==============================
-What is Project Name?
+What is categorical-encoding?
 ==============================

@@ -1,29 +1,19 @@
-.PHONY: clean
-clean:
-	find . -name '*.pyo' -delete
-	find . -name '*.pyc' -delete
-	find . -name __pycache__ -delete
-	find . -name '*~' -delete
+# Minimal makefile for Sphinx documentation
+#
 
-.PHONY: lint
-lint:
-	flake8 categorical_encoding && isort --check-only --recursive categorical_encoding
+# You can set these variables from the command line.
+SPHINXOPTS    =
+SPHINXBUILD   = sphinx-build
+SOURCEDIR     = source
+BUILDDIR      = build
 
-.PHONY: lint-fix
-lint-fix:
-	autopep8 --in-place --recursive --max-line-length=100 --select="E225,E303,E302,E203,E128,E231,E251,E271,E127,E126,E301,W291,W293,E226,E306,E221" categorical_encoding
-	isort --recursive categorical_encoding
+# Put it first so that "make" without argument is like "make help".
+help:
+	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: test
-test:
-	pytest categorical_encoding/tests
+.PHONY: help Makefile
 
-.PHONY: testcoverage
-testcoverage: lint
-	pytest categorical_encoding/tests --cov=categorical_encoding
-
-.PHONY: installdeps
-installdeps:
-	pip install --upgrade pip -q
-	pip install -e . -q
-	pip install -r dev-requirements.txt -q
+# Catch-all target: route all unknown targets to Sphinx using the new
+# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+%: Makefile
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

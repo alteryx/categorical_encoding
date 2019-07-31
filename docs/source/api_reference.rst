@@ -2,7 +2,7 @@
 API Reference
 =============
 
-.. currentmodule:: categorical-encoding
+.. currentmodule:: categorical_encoding
 
 .. autosummary::
    :nosignatures:
