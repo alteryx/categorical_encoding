@@ -47,9 +47,10 @@ class Encoder():
                     feature_list.append(f)
         else:
             for f in self.features:
+                index = 0
                 if f.get_name() in self.method.cols: # this isn't supporting multiple output features yet
-                    f = f.rename(f.get_name() + '_' + str(self.method)[:str(self.method).find('Encoder')].lower())
-                print(f)
+                    f = ft.Feature([f], primitive=OrdinalEnc(self.method.mapping[index]['mapping']))
+                    index += 1
                 feature_list.append(f)
             
         self.features = feature_list
@@ -63,6 +64,8 @@ class Encoder():
     
     def get_features(self):
         return self.features
+    
+        
     
 # potential challenge in calculate feature matrix from feature list
 '''
