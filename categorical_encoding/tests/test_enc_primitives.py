@@ -38,7 +38,7 @@ def test_ordinal_encoding():
     assert (result == feature_matrix).all().all()
 
 
-def test_ordinal_encoding():
+def test_binary_encoding():
     es = make_ecommerce_entityset()
     f1 = ft.Feature(es["log"]["product_id"])
     f2 = ft.Feature(es["log"]["purchased"])
@@ -54,4 +54,23 @@ def test_ordinal_encoding():
     
     encoder = BinaryEnc(mapping=mapping, mapping_ord=mapping_ord)
     encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
-    print(encoded)
+    result = [[0, 0, 0, 0],
+              [1, 1, 0, 0],
+              [0, 1, 1, 1]]
+    assert encoded == result
+    
+    product_feature = ft.Feature([f1], primitive=BinaryEnc(mapping, mapping_ord))
+    mapping_cc, mapping_ord_cc = enc.get_mapping(1)
+    # this returns a tuple, perhaps we can work with that tuple within the function
+    # that would retain API functionality but may make it more confusing
+    cc_feature = ft.Feature([f4], primitive=BinaryEnc(mapping_cc, mapping_ord_cc))
+    features = [product_feature, f2, f3, cc_feature]
+    feature_matrix = ft.calculate_feature_matrix(features, es, instance_ids=ids)
+    fm_result = pd.DataFrame([[0, 0, 1, True, 0.0, 0, 1],
+                              [0, 0, 1, True, 5.0, 0, 1],
+                              [0, 0, 1, True, 10.0, 0, 1],
+                              [0, 1, 0, True, 15.0, 0, 1],
+                              [0, 1, 0, True, 20.0, 0, 1],
+                              [0, 1, 1, True, 0.0, 1, 0]],
+                              columns=['PRODUCT_ID_binary__0', 'PRODUCT_ID_binary__1', 'PRODUCT_ID_binary__2', 'purchased', 'value', 'COUNTRYCODE_binary__0', 'COUNTRYCODE_binary__1'])
+    assert (fm_result == feature_matrix).all().all()
