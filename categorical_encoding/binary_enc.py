@@ -2,11 +2,22 @@ from featuretools.primitives.base.transform_primitive_base import (
     TransformPrimitive
 )
 from featuretools.variable_types import Categorical, Numeric
-import pandas as pd
 import numpy as np
 
 
 class BinaryEnc(TransformPrimitive):
+    """Applies a fitted Binary Encoder to the values.
+    Requires an already fitted encoder.
+
+    Examples:
+        >>> enc = Encoder(method='Binary')
+        >>> enc.fit_transform(feature_matrix, features)
+        >>> encoder = BinaryEnc(fitted_encoder=enc, category='product_id')
+        >>> encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
+        result = [[0, 0, 0, 0],
+                  [1, 1, 0, 0],
+                  [0, 1, 1, 1]]
+    """
     name = "binary_enc"
     input_types = [Categorical]
     return_type = [Numeric]
@@ -22,9 +33,9 @@ class BinaryEnc(TransformPrimitive):
             if self.mapping_ord is not None:
                 X = X.map(self.mapping_ord)
             if self.mapping is not None:
-                for col in range(self.n):
-                    mapped.append([self.mapping.loc[value][col] for value in X])
-            return mapped
+                for value in X:
+                    mapped.append(self.mapping.loc[value].values)
+            return np.swapaxes(mapped, 0, 1)
         return transform
 
     def generate_name(self, base_feature_names):

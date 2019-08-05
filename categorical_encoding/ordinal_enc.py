@@ -5,6 +5,16 @@ from featuretools.variable_types import Categorical, Ordinal
 
 
 class OrdinalEnc(TransformPrimitive):
+    """Applies a fitted Ordinal Encoder to the values.
+    Requires an already fitted encoder.
+
+    Examples:
+        >>> enc = Encoder(method='ordinal')
+        >>> enc.fit_transform(feature_matrix, features)
+        >>> encoder = OrdinalEnc(fitted_encoder=enc, category='product_id')
+        >>> encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
+        [2, 3, 1, 1]
+    """
     name = "ordinal_enc"
     input_types = [Categorical]
     return_type = Ordinal
