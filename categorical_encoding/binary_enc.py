@@ -11,10 +11,9 @@ class BinaryEnc(TransformPrimitive):
     input_types = [Categorical]
     return_type = [Numeric]
 
-    def __init__(self, mapping=None, mapping_ord=None):
-        self.mapping = mapping
-        self.mapping_ord = mapping_ord
-        self.n = mapping.shape[1]
+    def __init__(self, fitted_encoder, category):
+        self.mapping, self.mapping_ord = fitted_encoder.get_mapping(category)
+        self.n = self.mapping.shape[1]
         self.number_output_features = self.n
 
     def get_function(self):

@@ -9,8 +9,8 @@ class OrdinalEnc(TransformPrimitive):
     input_types = [Categorical]
     return_type = Ordinal
 
-    def __init__(self, mapping=None):
-        self.mapping = mapping
+    def __init__(self, fitted_encoder, category):
+        self.mapping = fitted_encoder.get_mapping(category)
 
     def get_function(self):
         def transform(X):
