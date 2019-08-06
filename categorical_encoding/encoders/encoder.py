@@ -29,7 +29,7 @@ class Encoder():
             returns n_components (int)
     """
 
-    def __init__(self, method=OrdinalEncoder, to_encode=None, top_n=10):
+    def __init__(self, method=OrdinalEncoder, to_encode=None):
         encoder_list = {'ordinal': OrdinalEncoder,
                         'binary': BinaryEncoder,
                         'hashing': HashingEncoder}
@@ -37,8 +37,6 @@ class Encoder():
             method = encoder_list[method]
 
         self.method = method(cols=to_encode)
-        # top_n only for OneHotEncoder
-        self.top_n = top_n
         self.features = []
 
     def fit(self, X, y=None):
