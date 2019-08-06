@@ -5,14 +5,42 @@ from categorical_encoding.primitives import HashingEnc
 
 
 class HashingEncoder():
+    """
+        Maps each categorical value to several columns using a specific hash function.
+
+        Parameters:
+        cols: [str]
+            list of column names to encode.
+        hash_method: str
+            str for hash_method name to use. Any method from hashlib works.
+        n_components: int
+            integer for the number of columns to map to.
+
+        Functions:
+        fit:
+            fits encoder to data table
+            returns self
+        transform:
+            encodes matrix and updates features accordingly
+            returns encoded matrix (dataframe)
+        fit_transform:
+            fits, then transforms matrix
+            returns encoded matrix (dataframe)
+        get_hash_method:
+            gets the hash_method of the encoder
+            return hash_method (str)
+        get_n_components:
+            gets the number of columns used in the encoder
+            returns n_components (int)
+    """
+
     def __init__(self, cols, hash_method='md5', n_components=8):
         self.encoder = {}
-        # may add hashing method here
         self.cols = cols
         self.hash_method = 'md5'
         self.n_components = n_components
 
-    def fit(self, X, features, y=None):
+    def fit(self, X, y=None):
         self.cols = Hashing(cols=self.cols, hash_method=self.hash_method, n_components=self.n_components).fit(X, y).cols
         for col in self.cols:
             self.encoder[col] = Hashing(cols=[col], hash_method=self.hash_method, n_components=self.n_components)
@@ -37,7 +65,7 @@ class HashingEncoder():
         return X
 
     def fit_transform(self, X, features, y=None):
-        return self.fit(X, features, y).transform(X, features)
+        return self.fit(X, y).transform(X, features)
 
     def encode_features_list(self, X, features):
         feature_list = []

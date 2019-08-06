@@ -5,6 +5,28 @@ from categorical_encoding.primitives import OrdinalEnc
 
 
 class OrdinalEncoder():
+    """
+        Maps each categorical value to one column using ordinal encoding.
+
+        Parameters:
+        cols: [str]
+            list of column names to encode.
+
+        Functions:
+        fit:
+            fits encoder to data table
+            returns self
+        transform:
+            encodes matrix and updates features accordingly
+            returns encoded matrix (dataframe)
+        fit_transform:
+            first fits, then transforms matrix
+            returns encoded matrix (dataframe)
+        get_mapping:
+            gets the mapping the ordinal encoder
+            returns mapping (dict)
+    """
+
     def __init__(self, cols):
         self.encoder = Ordinal(cols=cols)
 

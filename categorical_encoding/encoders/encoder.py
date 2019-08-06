@@ -2,6 +2,33 @@ from .encoder_methods import BinaryEncoder, HashingEncoder, OrdinalEncoder
 
 
 class Encoder():
+    """
+        Encodes specified columns of categorical values.
+
+        Parameters:
+        cols: [str]
+            list of column names to encode.
+
+        Functions:
+        fit:
+            fits encoder to data table
+            returns self
+        transform:
+            encodes matrix and updates features accordingly
+            returns encoded matrix (dataframe)
+        fit_transform:
+            first fits, then transforms matrix
+            returns encoded matrix (dataframe)
+        get_mapping:
+            gets the mapping for the encoder (binary, ordinal only)
+        get_hash_method:
+            gets the hash_method of the encoder (hashing only)
+            return hash_method (str)
+        get_n_components:
+            gets the number of columns used in the encoder (hashing only)
+            returns n_components (int)
+    """
+
     def __init__(self, method=OrdinalEncoder, to_encode=None, top_n=10):
         encoder_list = {'ordinal': OrdinalEncoder,
                         'binary': BinaryEncoder,
