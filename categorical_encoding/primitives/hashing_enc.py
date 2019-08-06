@@ -1,9 +1,10 @@
+import numpy as np
+from category_encoders import HashingEncoder
 from featuretools.primitives.base.transform_primitive_base import (
     TransformPrimitive
 )
 from featuretools.variable_types import Categorical, Numeric
-from category_encoders import HashingEncoder
-import numpy as np
+
 
 class HashingEnc(TransformPrimitive):
     name = "hashing_enc"

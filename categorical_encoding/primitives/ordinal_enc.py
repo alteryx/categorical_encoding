@@ -8,6 +8,13 @@ class OrdinalEnc(TransformPrimitive):
     """Applies a fitted Ordinal Encoder to the values.
     Requires an already fitted encoder.
 
+    Parameters:
+        fitted_encoder: encoder
+            encoder that has already learned encoding mappings from fitting to a data table.
+        category: str or int
+            string or integer corresponding to the name of the particular category.
+            If integer, is the nth category encoded in the data table.
+
     Examples:
         >>> enc = Encoder(method='ordinal')
         >>> enc.fit_transform(feature_matrix, features)
