@@ -20,10 +20,10 @@ import categorical_encoding as ce
 
 encoder = ce.Encoder()
 encoder.fit(feature_matrix, features)
-fm_encoded = encoder.transform(feature_matrix, features)
+fm_encoded_ordinal = encoder.transform(feature_matrix, features)
 ```
-feature_matrix
 ```py
+>>> feature_matrix
     product_id  purchased  value countrycode
 id                                          
 0    coke zero       True    0.0          US
@@ -33,8 +33,8 @@ id
 4          car       True   20.0          US
 5   toothpaste       True    0.0          AL
 ```
-fm_encoded
 ```py
+>>> fm_encoded_ordinal
     PRODUCT_ID_ordinal  purchased  value  COUNTRYCODE_ordinal
 id                                                           
 0                    1       True    0.0                    1
