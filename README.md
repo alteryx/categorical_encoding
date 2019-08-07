@@ -4,6 +4,8 @@
 [![codecov](https://codecov.io/gh/FeatureLabs/categorical_encoding/branch/master/graph/badge.svg)](https://codecov.io/gh/FeatureLabs/categorical_encoding)
 [![Documentation Status](https://readthedocs.org/projects/categorical_encoding/badge/?version=latest)](http://docs.compose.ml/en/latest/?badge=latest)
 
+categorical-encoding is a python library to encode categorical values in data with easy integration into Featuretools.
+
 ### Install
 ```shell
 pip install categorical_encoding
