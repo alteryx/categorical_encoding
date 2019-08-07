@@ -18,5 +18,5 @@
     changelog
 
 ==============================
-What is categorical_encoding?
+What is categorical-encoding?
 ==============================

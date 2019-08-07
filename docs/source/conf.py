@@ -22,7 +22,7 @@ import categorical_encoding
 
 # -- Project information -----------------------------------------------------
 
-project = 'categorical_encoding'
+project = 'categorical-encoding'
 copyright = '2019, Feature Labs, Inc.'
 author = 'Feature Labs, Inc.'
 
