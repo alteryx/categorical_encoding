@@ -1,4 +1,5 @@
 import featuretools as ft
+import numpy as np
 from category_encoders import OneHotEncoder as OneHot
 
 from categorical_encoding.primitives import OneHotEnc
@@ -41,6 +42,10 @@ class OneHotEncoder():
                 for label in unique:
                     add = ft.Feature([f], primitive=OneHotEnc(label))
                     feature_list.append(add)
+                has_unknown = X[f.get_name()].isnull().values.any()
+                if has_unknown:
+                    unknown = ft.Feature([f], primitive=OneHotEnc(np.nan))
+                    feature_list.append(unknown)
             else:
                 feature_list.append(f)
         return feature_list

@@ -1,4 +1,5 @@
 import featuretools as ft
+import numpy as np
 
 from .testing_utils import create_feature_matrix
 
@@ -97,6 +98,11 @@ def test_one_hot_encoding():
     encoder = OneHotEnc(value='coke zero')
     encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
     encoded_results = [0, 0, 1, 1]
+    assert (encoded == encoded_results).all()
+
+    encoder = OneHotEnc(value=np.nan)
+    encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero', np.nan])
+    encoded_results = [0, 0, 0, 0, 1]
     assert (encoded == encoded_results).all()
 
     f1_1 = ft.Feature([f1], primitive=OneHotEnc('coke zero'))

@@ -9,8 +9,8 @@ class OneHotEnc(TransformPrimitive):
     """Applies one hot encoding for the specific category value to the column
 
     Parameters:
-        value: str
-            The category value
+        value: str or nan
+            The category value.
 
     Examples:
         >>> enc = Encoder(method='one_hot')
@@ -28,6 +28,8 @@ class OneHotEnc(TransformPrimitive):
 
     def get_function(self):
         def transform(X):
+            if pd.isnull(self.value):
+                return pd.isna(X).astype(int)
             return (pd.Series(X).astype(pd.Series([self.value]).dtype) == self.value).astype(int)
         return transform
 
