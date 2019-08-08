@@ -17,13 +17,13 @@ class BinaryEnc(TransformPrimitive):
             If integer, is the nth category encoded in the data table.
 
     Examples:
-        >>> enc = Encoder(method='Binary')
+        >>> enc = Encoder(method='binary')
         >>> enc.fit_transform(feature_matrix, features)
         >>> encoder = BinaryEnc(fitted_encoder=enc, category='product_id')
         >>> encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
-        result = [[0, 0, 0, 0],
-                  [1, 1, 0, 0],
-                  [0, 1, 1, 1]]
+        [[0, 0, 0, 0],
+         [1, 1, 0, 0],
+         [0, 1, 1, 1]]
     """
     name = "binary_enc"
     input_types = [Categorical]

@@ -18,14 +18,14 @@ class HashingEnc(TransformPrimitive):
         >>> enc.fit_transform(feature_matrix, features)
         >>> encoder = HashingEnc(fitted_encoder=enc, category='product_id')
         >>> encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
-        encoded_results = [[0, 0, 0, 0],
-                           [1, 0, 0, 0],
-                           [0, 0, 0, 0],
-                           [0, 1, 0, 0],
-                           [0, 0, 1, 1],
-                           [0, 0, 0, 0],
-                           [0, 0, 0, 0],
-                           [0, 0, 0, 0]]
+        [[0, 0, 0, 0],
+         [1, 0, 0, 0],
+         [0, 0, 0, 0],
+         [0, 1, 0, 0],
+         [0, 0, 1, 1],
+         [0, 0, 0, 0],
+         [0, 0, 0, 0],
+         [0, 0, 0, 0]]
     """
     name = "hashing_enc"
     input_types = [Categorical]

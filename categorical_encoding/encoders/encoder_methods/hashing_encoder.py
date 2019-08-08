@@ -48,21 +48,22 @@ class HashingEncoder():
         return self
 
     def transform(self, X, features):
+        X_new = X.copy()
         index = 0
         for col in self.cols:
             new_columns = self.encoder[col].transform(X[col])
-            index = X.columns.get_loc(col)
-            X.drop([col], axis=1, inplace=True)
+            index = X_new.columns.get_loc(col)
+            X_new.drop([col], axis=1, inplace=True)
             for col_enc in new_columns.iloc[:, ::-1]:
-                X.insert(index, col_enc, new_columns[col_enc], allow_duplicates=True)
+                X_new.insert(index, col_enc, new_columns[col_enc], allow_duplicates=True)
 
         feature_names = []
         for feature in features:
             for fname in feature.get_feature_names():
                 feature_names.append(fname)
-        X.columns = feature_names
+        X_new.columns = feature_names
 
-        return X
+        return X_new
 
     def fit_transform(self, X, features, y=None):
         return self.fit(X, y).transform(X, features)

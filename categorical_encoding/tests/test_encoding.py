@@ -3,7 +3,12 @@ import featuretools as ft
 from .testing_utils import create_feature_matrix
 
 from categorical_encoding.encoders import Encoder
-from categorical_encoding.primitives import BinaryEnc, HashingEnc, OrdinalEnc
+from categorical_encoding.primitives import (
+    BinaryEnc,
+    HashingEnc,
+    OneHotEnc,
+    OrdinalEnc
+)
 
 
 def test_ordinal_encoding():
@@ -22,6 +27,7 @@ def test_ordinal_encoding():
     features = [product_feature, f2, f3, cc_feature]
     assert features == enc.get_features()
 
+    features = enc.get_features()
     feature_matrix_new = ft.calculate_feature_matrix(features, es, instance_ids=ids)
     assert (fm_encoded == feature_matrix_new).all().all()
 
@@ -47,6 +53,7 @@ def test_binary_encoding():
     for i in range(len(enc.get_features())):
         assert features[i].unique_name() == enc.get_features()[i].unique_name()
 
+    features = enc.get_features()
     feature_matrix = ft.calculate_feature_matrix(features, es, instance_ids=ids)
     assert (fm_encoded == feature_matrix).all().all()
 
@@ -76,5 +83,33 @@ def test_hashing_encoding():
     for i in range(len(features)):
         assert features[i].unique_name() == enc.get_features()[i].unique_name()
 
+    features = enc.get_features()
     feature_matrix = ft.calculate_feature_matrix(features, es, instance_ids=ids)
+    assert (fm_encoded == feature_matrix).all().all()
+
+
+def test_one_hot_encoding():
+    feature_matrix, features, f1, f2, f3, f4, es, ids = create_feature_matrix()
+
+    enc = Encoder(method='one_hot')
+    fm_encoded = enc.fit_transform(feature_matrix, features)
+
+    encoder = OneHotEnc(value='coke zero')
+    encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
+    encoded_results = [0, 0, 1, 1]
+    assert (encoded == encoded_results).all()
+
+    f1_1 = ft.Feature([f1], primitive=OneHotEnc('coke zero'))
+    f1_2 = ft.Feature([f1], primitive=OneHotEnc('car'))
+    f1_3 = ft.Feature([f1], primitive=OneHotEnc('toothpaste'))
+
+    f4_1 = ft.Feature([f4], primitive=OneHotEnc('US'))
+    f4_2 = ft.Feature([f4], primitive=OneHotEnc('AL'))
+    features_encoded = [f1_1, f1_2, f1_3, f2, f3, f4_1, f4_2]
+    assert len(features_encoded) == len(enc.get_features())
+    for i in range(len(features_encoded)):
+        assert features_encoded[i].unique_name() == enc.get_features()[i].unique_name()
+
+    features_encoded = enc.get_features()
+    feature_matrix = ft.calculate_feature_matrix(features_encoded, es, instance_ids=ids)
     assert (fm_encoded == feature_matrix).all().all()

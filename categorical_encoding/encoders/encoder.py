@@ -1,4 +1,9 @@
-from .encoder_methods import BinaryEncoder, HashingEncoder, OrdinalEncoder
+from .encoder_methods import (
+    BinaryEncoder,
+    HashingEncoder,
+    OneHotEncoder,
+    OrdinalEncoder
+)
 
 
 class Encoder():
@@ -32,7 +37,8 @@ class Encoder():
     def __init__(self, method=OrdinalEncoder, to_encode=None):
         encoder_list = {'ordinal': OrdinalEncoder,
                         'binary': BinaryEncoder,
-                        'hashing': HashingEncoder}
+                        'hashing': HashingEncoder,
+                        'one_hot': OneHotEncoder}
         if method in encoder_list:
             method = encoder_list[method]
 
