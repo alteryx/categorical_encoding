@@ -8,22 +8,18 @@ from categorical_encoding.primitives import OneHotEnc
 class OneHotEncoder():
     def __init__(self, cols):
         self.encoder = OneHot(cols=cols)
+        self.matrix = None
 
     def fit(self, X, y=None):
         self.encoder.fit(X, y=None)
         return self
 
-    def transform(self, X, features):
-        X_new = self.encoder.transform(X)
-        feature_names = []
-        for feature in features:
-            for fname in feature.get_feature_names():
-                feature_names.append(fname)
-        X_new.columns = feature_names
-        return X_new
+    def transform(self, X, features=None):
+        assert(self.matrix is not None), "Make sure the encoder is fitted"
+        return self.matrix
 
-    def fit_transform(self, X, features, y=None):
-        return self.fit(X, y).transform(X, features)
+    def fit_transform(self, X, features=None, y=None):
+        return self.fit(X, y).transform(X)
 
     def get_mapping(self, category):
         if isinstance(category, str):
@@ -33,19 +29,28 @@ class OneHotEncoder():
         return self.encoder.mapping[category]['mapping']
 
     def encode_features_list(self, X, features):
+        X_new = X.copy()
         feature_list = []
         for f in features:
             if f.get_name() in self.encoder.cols:
                 val_counts = X[f.get_name()].value_counts().to_frame()
                 val_counts.sort_values(f.get_name(), ascending=False)
                 unique = val_counts.index.tolist()
+
+                index = X_new.columns.get_loc(f.get_name())
                 for label in unique:
                     add = ft.Feature([f], primitive=OneHotEnc(label))
                     feature_list.append(add)
+                    X_new.insert(index, add.get_name(), (X_new[f.get_name()] == label).astype(int), allow_duplicates=True)
+                    index += 1
                 has_unknown = X[f.get_name()].isnull().values.any()
                 if has_unknown:
                     unknown = ft.Feature([f], primitive=OneHotEnc(np.nan))
                     feature_list.append(unknown)
+                    X_new.insert(index, unknown.get_name(), (~X_new[f.get_name()].isin(unique)).astype(int), allow_duplicates=True)
+                X_new.drop([f.get_name()], axis=1, inplace=True)
             else:
                 feature_list.append(f)
+        self.matrix = X_new
         return feature_list
+        

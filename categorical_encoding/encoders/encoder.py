@@ -45,17 +45,16 @@ class Encoder():
         self.method = method(cols=to_encode)
         self.features = []
 
-    def fit(self, X, y=None):
+    def fit(self, X, features, y=None):
         self.method.fit(X, y)
+        self._encode_features_list(X, features)
         return self
 
-    def transform(self, X, features):
-        self.features = features
-        self._encode_features_list(X)
+    def transform(self, X):
         return self.method.transform(X, self.features)
 
     def fit_transform(self, X, features, y=None):
-        return self.fit(X, y).transform(X, features)
+        return self.fit(X, features, y).transform(X)
 
     def get_features(self):
         return self.features
@@ -73,5 +72,5 @@ class Encoder():
             raise TypeError("Must be HashingEncoder")
         return self.method.n_components
 
-    def _encode_features_list(self, X):
-        self.features = self.method.encode_features_list(X, self.features)
+    def _encode_features_list(self, X, features):
+        self.features = self.method.encode_features_list(X, features)
