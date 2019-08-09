@@ -15,7 +15,7 @@ class OneHotEncoder():
         return self
 
     def transform(self, X, features=None):
-        assert(self.matrix is not None), "Make sure the encoder is fitted"
+        assert(self.matrix is not None), "Check that the encoder is fitted."
         return self.matrix
 
     def fit_transform(self, X, features=None, y=None):
