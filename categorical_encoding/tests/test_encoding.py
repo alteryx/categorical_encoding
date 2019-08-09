@@ -96,7 +96,6 @@ def test_one_hot_encoding():
     feature_matrix['countrycode'][0] = np.nan
     enc = Encoder(method='one_hot')
     fm_encoded = enc.fit_transform(feature_matrix, features)
-    print(fm_encoded)
 
     encoder = OneHotEnc(value='coke zero')
     encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
