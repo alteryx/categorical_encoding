@@ -1,14 +1,19 @@
+import logging
+
 import featuretools as ft
 import numpy as np
 from category_encoders import OneHotEncoder as OneHot
 
 from categorical_encoding.primitives import OneHotEnc
 
+logger = logging.getLogger('featuretools')
+
 
 class OneHotEncoder():
-    def __init__(self, cols):
+    def __init__(self, cols, top_n=15):
         self.encoder = OneHot(cols=cols)
         self.matrix = None
+        self.top_n = top_n
 
     def fit(self, X, y=None):
         self.encoder.fit(X, y=None)
@@ -32,10 +37,14 @@ class OneHotEncoder():
         X_new = X.copy()
         feature_list = []
         for f in features:
+            if f.number_output_features > 1:
+                logger.warning("Feature %s has multiple columns. One-Hot Encoder may not properly encode."
+                               "Consider using another encoding method or the `encoder` property value assigned "
+                               "to this OneHotEncoder class instance." % (f))
             if f.get_name() in self.encoder.cols:
                 val_counts = X[f.get_name()].value_counts().to_frame()
                 val_counts.sort_values(f.get_name(), ascending=False)
-                unique = val_counts.index.tolist()
+                unique = val_counts.head(self.top_n).index.tolist()
 
                 index = X_new.columns.get_loc(f.get_name())
                 for label in unique:
@@ -53,4 +62,3 @@ class OneHotEncoder():
                 feature_list.append(f)
         self.matrix = X_new
         return feature_list
-        

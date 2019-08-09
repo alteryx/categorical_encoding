@@ -93,9 +93,10 @@ def test_hashing_encoding():
 def test_one_hot_encoding():
     feature_matrix, features, f1, f2, f3, f4, es, ids = create_feature_matrix()
 
-    feature_matrix['product_id'][0] = np.nan
+    feature_matrix['countrycode'][0] = np.nan
     enc = Encoder(method='one_hot')
     fm_encoded = enc.fit_transform(feature_matrix, features)
+    print(fm_encoded)
 
     encoder = OneHotEnc(value='coke zero')
     encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
@@ -110,25 +111,25 @@ def test_one_hot_encoding():
     f1_1 = ft.Feature([f1], primitive=OneHotEnc('coke zero'))
     f1_2 = ft.Feature([f1], primitive=OneHotEnc('car'))
     f1_3 = ft.Feature([f1], primitive=OneHotEnc('toothpaste'))
-    f1_4 = ft.Feature([f1], primitive=OneHotEnc(np.nan))
 
     f4_1 = ft.Feature([f4], primitive=OneHotEnc('US'))
     f4_2 = ft.Feature([f4], primitive=OneHotEnc('AL'))
-    features_encoded = [f1_1, f1_2, f1_3, f1_4, f2, f3, f4_1, f4_2]
+    f4_3 = ft.Feature([f4], primitive=OneHotEnc(np.nan))
+    features_encoded = [f1_1, f1_2, f1_3, f2, f3, f4_1, f4_2, f4_3]
     assert len(features_encoded) == len(enc.get_features())
     for i in range(len(features_encoded)):
         assert features_encoded[i].unique_name() == enc.get_features()[i].unique_name()
 
     features_encoded = enc.get_features()
-    feature_matrix = ft.calculate_feature_matrix(features_encoded, es, instance_ids=[6,7])
-    data = {'product_id = coke zero':[0, 0],
+    feature_matrix = ft.calculate_feature_matrix(features_encoded, es, instance_ids=[6, 7])
+    data = {'product_id = coke zero': [0, 0],
             'product_id = car': [0, 0],
             'product_id = toothpaste': [1, 1],
-            'product_id = nan': [0, 0],
             'purchased': [True, True],
             'value': [1.0, 2.0],
             'countrycode = US': [0, 0],
-            'countrycode = AL': [1, 1]}
-    fm_encoded = pd.DataFrame(data, index=[6,7])
+            'countrycode = AL': [1, 1],
+            'countrycode = nan': [0, 0]}
+    fm_encoded = pd.DataFrame(data, index=[6, 7])
     fm_encoded.index.name = 'id'
     assert (feature_matrix == fm_encoded).all().all()

@@ -34,15 +34,17 @@ class Encoder():
             returns n_components (int)
     """
 
-    def __init__(self, method=OrdinalEncoder, to_encode=None):
-        encoder_list = {'ordinal': OrdinalEncoder,
-                        'binary': BinaryEncoder,
-                        'hashing': HashingEncoder,
-                        'one_hot': OneHotEncoder}
+    def __init__(self, method='ordinal', to_encode=None):
+        encoder_list = {'ordinal': OrdinalEncoder(cols=to_encode),
+                        'binary': BinaryEncoder(cols=to_encode),
+                        'hashing': HashingEncoder(cols=to_encode),
+                        'one_hot': OneHotEncoder(cols=to_encode)}
         if method in encoder_list:
             method = encoder_list[method]
+        elif isinstance(method, str):
+            raise ValueError("'%s' is not a supported encoder. The list of supported String encoder method names is: %s" % (method, encoder_list.keys()))
 
-        self.method = method(cols=to_encode)
+        self.method = method
         self.features = []
 
     def fit(self, X, features, y=None):
