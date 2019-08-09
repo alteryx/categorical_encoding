@@ -53,6 +53,14 @@ Learn features through fitting an encoder to data, and then use those features t
  <Feature: value>,
  <Feature: COUNTRYCODE_ordinal>]
 >>> feature_matrix_2 = ft.calculate_feature_matrix(features, es)
+    PRODUCT_ID_ordinal  purchased  value  COUNTRYCODE_ordinal
+id                                                           
+0                    1       True    0.0                    1
+1                    1       True    5.0                    1
+2                    1       True   10.0                    1
+3                    2       True   15.0                    1
+4                    2       True   20.0                    1
+5                    3       True    0.0                    2
 ```
 
 ## Feature Labs
