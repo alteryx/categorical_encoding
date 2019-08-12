@@ -130,5 +130,4 @@ def test_one_hot_encoding():
             'countrycode = AL': [1, 1],
             'countrycode = nan': [0, 0]}
     fm_encoded = pd.DataFrame(data, index=[6, 7])
-    fm_encoded.index.name = 'id'
-    assert (feature_matrix == fm_encoded).all().all()
+    assert (feature_matrix.values == fm_encoded.values).all()
