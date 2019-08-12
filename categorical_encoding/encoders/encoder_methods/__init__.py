@@ -4,3 +4,4 @@ from .hashing_encoder import HashingEncoder
 from .one_hot_encoder import OneHotEncoder
 from .ordinal_encoder import OrdinalEncoder
 from .target_encoder import TargetEncoder
+from .leave_one_out_encoder import LeaveOneOutEncoder

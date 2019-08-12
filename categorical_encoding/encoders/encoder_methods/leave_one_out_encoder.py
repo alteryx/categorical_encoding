@@ -1,12 +1,12 @@
 import featuretools as ft
-from category_encoders import TargetEncoder as Target
+from category_encoders import LeaveOneOutEncoder as LeaveOneOut
 
-from categorical_encoding.primitives import TargetEnc
+from categorical_encoding.primitives import LeaveOneOutEnc
 
 
-class TargetEncoder():
+class LeaveOneOutEncoder():
     """
-        Maps each categorical value to one column using target encoding.
+        Maps each categorical value to one column using LeaveOneOut encoding.
 
         Parameters:
         cols: [str]
@@ -23,12 +23,12 @@ class TargetEncoder():
             first fits, then transforms matrix
             returns encoded matrix (dataframe)
         get_mapping:
-            gets the mapping for the target encoder. Only takes strings of the column name, not the index number.
-            returns tuple of dict (mapping, mapping of corresponding ordinal encoder)
+            gets the mapping for the LeaveOneOut encoder. Only takes strings of the column name, not the index number.
+            returns mapping (dict)
     """
 
     def __init__(self, cols=None):
-        self.encoder = Target(cols=cols)
+        self.encoder = LeaveOneOut(cols=cols)
 
     def fit(self, X, y):
         self.encoder.fit(X, y)
@@ -47,19 +47,12 @@ class TargetEncoder():
         return self.fit(X, y).transform(X, features)
 
     def get_mapping(self, category):
-        def mapping_helper(method, category):
-            if isinstance(category, str):
-                for map in method.mapping:
-                    if map['col'] == category:
-                        return map['mapping']
-            return method.mapping[category]['mapping']
-
-        return self.encoder.mapping[category], mapping_helper(self.encoder.ordinal_encoder, category)
+        return self.encoder.mapping[category]
 
     def encode_features_list(self, X, features):
         feature_list = []
         for f in features:
             if f.get_name() in self.encoder.cols:
-                f = ft.Feature([f], primitive=TargetEnc(self, f.get_name()))
+                f = ft.Feature([f], primitive=LeaveOneOutEnc(self, f.get_name()))
             feature_list.append(f)
         return feature_list

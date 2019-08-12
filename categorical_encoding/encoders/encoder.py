@@ -3,7 +3,8 @@ from .encoder_methods import (
     HashingEncoder,
     OneHotEncoder,
     OrdinalEncoder,
-    TargetEncoder
+    TargetEncoder,
+    LeaveOneOutEncoder
 )
 
 
@@ -40,7 +41,8 @@ class Encoder():
                         'binary': BinaryEncoder(cols=to_encode),
                         'hashing': HashingEncoder(cols=to_encode),
                         'one_hot': OneHotEncoder(cols=to_encode),
-                        'target': TargetEncoder(cols=to_encode)}
+                        'target': TargetEncoder(cols=to_encode),
+                        'leave_one_out': LeaveOneOutEncoder(cols=to_encode)}
         if method in encoder_list:
             method = encoder_list[method]
         elif isinstance(method, str):

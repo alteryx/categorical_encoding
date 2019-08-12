@@ -10,7 +10,8 @@ from categorical_encoding.primitives import (
     HashingEnc,
     OneHotEnc,
     OrdinalEnc,
-    TargetEnc
+    TargetEnc,
+    LeaveOneOutEnc
 )
 
 
@@ -147,6 +148,27 @@ def test_target_encoding():
 
     product_feature = ft.Feature([f1], primitive=TargetEnc(enc, 'product_id'))
     cc_feature = ft.Feature([f4], primitive=TargetEnc(enc, 'countrycode'))
+    features = [product_feature, f2, f3, cc_feature]
+    assert features == enc.get_features()
+
+    features = enc.get_features()
+    feature_matrix_new = ft.calculate_feature_matrix(features, es, instance_ids=ids)
+    assert (fm_encoded == feature_matrix_new).all().all()
+
+
+def test_leave_one_out_encoding():
+    feature_matrix, features, f1, f2, f3, f4, es, ids = create_feature_matrix()
+
+    enc = Encoder(method='leave_one_out')
+    fm_encoded = enc.fit_transform(feature_matrix, features, feature_matrix['value'])
+
+    encoder = LeaveOneOutEnc(fitted_encoder=enc, category='product_id')
+    encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
+    encoded_results = [17.5, 8.33333, 5, 5]
+    np.testing.assert_almost_equal(encoded, encoded_results, decimal=4)
+
+    product_feature = ft.Feature([f1], primitive=LeaveOneOutEnc(enc, 'product_id'))
+    cc_feature = ft.Feature([f4], primitive=LeaveOneOutEnc(enc, 'countrycode'))
     features = [product_feature, f2, f3, cc_feature]
     assert features == enc.get_features()
 
