@@ -9,7 +9,8 @@ from categorical_encoding.primitives import (
     BinaryEnc,
     HashingEnc,
     OneHotEnc,
-    OrdinalEnc
+    OrdinalEnc,
+    TargetEnc
 )
 
 
@@ -131,3 +132,24 @@ def test_one_hot_encoding():
             'countrycode = nan': [0, 0]}
     fm_encoded = pd.DataFrame(data, index=[6, 7])
     assert feature_matrix.eq(fm_encoded).all().all()
+
+
+def test_target_encoding():
+    feature_matrix, features, f1, f2, f3, f4, es, ids = create_feature_matrix()
+
+    enc = Encoder(method='target')
+    fm_encoded = enc.fit_transform(feature_matrix, features, feature_matrix['value'])
+
+    encoder = TargetEnc(fitted_encoder=enc, category='product_id')
+    encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
+    encoded_results = [15.034704, 8.333333, 5.397343, 5.397343]
+    np.testing.assert_almost_equal(encoded, encoded_results, decimal=5)
+
+    product_feature = ft.Feature([f1], primitive=TargetEnc(enc, 'product_id'))
+    cc_feature = ft.Feature([f4], primitive=TargetEnc(enc, 'countrycode'))
+    features = [product_feature, f2, f3, cc_feature]
+    assert features == enc.get_features()
+
+    features = enc.get_features()
+    feature_matrix_new = ft.calculate_feature_matrix(features, es, instance_ids=ids)
+    assert (fm_encoded == feature_matrix_new).all().all()

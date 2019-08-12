@@ -27,7 +27,7 @@ class OrdinalEncoder():
             returns mapping (dict)
     """
 
-    def __init__(self, cols):
+    def __init__(self, cols=None):
         self.encoder = Ordinal(cols=cols)
 
     def fit(self, X, y=None):

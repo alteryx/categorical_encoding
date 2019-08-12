@@ -10,7 +10,33 @@ logger = logging.getLogger('featuretools')
 
 
 class OneHotEncoder():
-    def __init__(self, cols, top_n=15):
+    """
+        Maps each categorical value to several columns using one-hot encoding.
+
+        Parameters:
+        cols: [str]
+            list of column names to encode.
+        top_n: int
+            number of unique category values to encode (determines the number of resulting columns)
+            selects based off of number of occurences of value
+            defaults to 15
+
+        Functions:
+        fit:
+            fits encoder to data table
+            returns self
+        transform:
+            encodes matrix and updates features accordingly
+            returns encoded matrix (dataframe)
+        fit_transform:
+            first fits, then transforms matrix
+            returns encoded matrix (dataframe)
+        get_mapping:
+            gets the mapping for the one-hot encoder
+            returns mapping (dict)
+    """
+
+    def __init__(self, cols=None, top_n=15):
         self.encoder = OneHot(cols=cols)
         self.matrix = None
         self.top_n = top_n

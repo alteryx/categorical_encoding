@@ -1,12 +1,12 @@
 import featuretools as ft
-from category_encoders import BinaryEncoder as Binary
+from category_encoders import TargetEncoder as Target
 
-from categorical_encoding.primitives import BinaryEnc
+from categorical_encoding.primitives import TargetEnc
 
 
-class BinaryEncoder():
+class TargetEncoder():
     """
-        Maps each categorical value to several columns using binary encoding.
+        Maps each categorical value to one column using target encoding.
 
         Parameters:
         cols: [str]
@@ -23,14 +23,14 @@ class BinaryEncoder():
             first fits, then transforms matrix
             returns encoded matrix (dataframe)
         get_mapping:
-            gets the mapping for the binary encoder and underlying ordinal encoder
-            returns tuple (binary_encoder_mapping, ordinal_encoder_mapping)
+            gets the mapping for the target encoder. Only takes strings of the column name, not the index number.
+            returns mapping (dict)
     """
 
     def __init__(self, cols=None):
-        self.encoder = Binary(cols=cols)
+        self.encoder = Target(cols=cols)
 
-    def fit(self, X, y=None):
+    def fit(self, X, y):
         self.encoder.fit(X, y)
         return self
 
@@ -41,7 +41,6 @@ class BinaryEncoder():
             for fname in feature.get_feature_names():
                 feature_names.append(fname)
         X_new.columns = feature_names
-
         return X_new
 
     def fit_transform(self, X, features, y=None):
@@ -55,15 +54,12 @@ class BinaryEncoder():
                         return map['mapping']
             return method.mapping[category]['mapping']
 
-        return mapping_helper(self.encoder.base_n_encoder, category), \
-            mapping_helper(self.encoder.base_n_encoder.ordinal_encoder, category)
+        return self.encoder.mapping[category], mapping_helper(self.encoder.ordinal_encoder, category)
 
     def encode_features_list(self, X, features):
         feature_list = []
-        index = 0
         for f in features:
-            if f.get_name() in self.encoder.base_n_encoder.cols:
-                f = ft.Feature([f], primitive=BinaryEnc(self, index))
-                index += 1
+            if f.get_name() in self.encoder.cols:
+                f = ft.Feature([f], primitive=TargetEnc(self, f.get_name()))
             feature_list.append(f)
         return feature_list

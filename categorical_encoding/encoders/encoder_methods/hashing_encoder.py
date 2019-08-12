@@ -34,7 +34,7 @@ class HashingEncoder():
             returns n_components (int)
     """
 
-    def __init__(self, cols, hash_method='md5', n_components=8):
+    def __init__(self, cols=None, hash_method='md5', n_components=8):
         self.encoder = {}
         self.cols = cols
         self.hash_method = 'md5'
