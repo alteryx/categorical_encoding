@@ -82,6 +82,6 @@ class HashingEncoder():
 
     def get_n_components(self):
         return self.n_components
-    
+
     def get_features(self):
         return self.features

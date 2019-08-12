@@ -89,6 +89,6 @@ class OneHotEncoder():
                 feature_list.append(f)
         self.matrix = X_new
         return feature_list
-    
+
     def get_features(self):
         return self.features

@@ -63,6 +63,6 @@ class OrdinalEncoder():
                 index += 1
             feature_list.append(f)
         return feature_list
-    
+
     def get_features(self):
         return self.features

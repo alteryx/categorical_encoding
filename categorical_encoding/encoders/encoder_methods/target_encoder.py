@@ -64,6 +64,6 @@ class TargetEncoder():
                 f = ft.Feature([f], primitive=TargetEnc(self, f.get_name()))
             feature_list.append(f)
         return feature_list
-    
+
     def get_features(self):
         return self.features
