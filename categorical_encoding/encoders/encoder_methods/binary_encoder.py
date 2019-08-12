@@ -30,14 +30,15 @@ class BinaryEncoder():
     def __init__(self, cols=None):
         self.encoder = Binary(cols=cols)
 
-    def fit(self, X, y=None):
+    def fit(self, X, features, y=None):
         self.encoder.fit(X, y)
+        self.features = self.encode_features_list(X, features)
         return self
 
-    def transform(self, X, features):
+    def transform(self, X):
         X_new = self.encoder.transform(X)
         feature_names = []
-        for feature in features:
+        for feature in self.features:
             for fname in feature.get_feature_names():
                 feature_names.append(fname)
         X_new.columns = feature_names
@@ -45,7 +46,7 @@ class BinaryEncoder():
         return X_new
 
     def fit_transform(self, X, features, y=None):
-        return self.fit(X, y).transform(X, features)
+        return self.fit(X, features, y).transform(X)
 
     def get_mapping(self, category):
         def mapping_helper(method, category):
@@ -67,3 +68,6 @@ class BinaryEncoder():
                 index += 1
             feature_list.append(f)
         return feature_list
+
+    def get_features(self):
+        return self.features

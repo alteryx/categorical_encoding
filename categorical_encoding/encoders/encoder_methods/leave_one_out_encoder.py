@@ -30,19 +30,22 @@ class LeaveOneOutEncoder():
     def __init__(self, cols=None):
         self.encoder = LeaveOneOut(cols=cols)
 
-    def fit(self, X, y):
+    def fit(self, X, features, y):
         self.encoder.fit(X, y)
-        self.y = y
+        self.features = self.encode_features_list(X, features)
         return self
 
-    def transform(self, X, features):
-        transform_encoder = LeaveOneOut(cols=self.encoder.cols)
-        X_new = transform_encoder.fit_transform(X, self.y)
-        X_new.columns = self._rename_columns(features)
+    def transform(self, X):
+        X_new = self.encoder.transform(X)
+        X_new.columns = self._rename_columns(self.features)
         return X_new
 
     def fit_transform(self, X, features, y=None):
-        return self.fit(X, y).transform(X, features)
+        self.encoder.fit(X, y)
+        self.features = self.encode_features_list(X, features)
+        X_new = self.encoder.fit_transform(X, y)
+        X_new.columns = self._rename_columns(self.features)
+        return X_new
 
     def get_mapping(self, category):
         return self.encoder.mapping[category]
@@ -61,3 +64,6 @@ class LeaveOneOutEncoder():
             for fname in feature.get_feature_names():
                 feature_names.append(fname)
         return feature_names
+
+    def get_features(self):
+        return self.features
