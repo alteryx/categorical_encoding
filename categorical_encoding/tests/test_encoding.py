@@ -166,7 +166,7 @@ def test_leave_one_out_encoding():
                        'value': [0.0, 5.0, 10.0, 15.0, 20.0, 0.0],
                        'COUNTRYCODE_leave_one_out': [12.5, 11.25, 10.0, 8.75, 7.5, 8.33], }
     fm_encoded_result = pd.DataFrame(fm_encoded_data)
-    np.testing.assert_almost_equal(fm_encoded.values, fm_encoded_result.values, decimal=1)
+    np.testing.assert_almost_equal(fm_encoded.values, fm_encoded_result.values, decimal=2)
 
     encoder = LeaveOneOutEnc(fitted_encoder=enc, category='product_id')
     encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
