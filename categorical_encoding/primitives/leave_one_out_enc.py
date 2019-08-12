@@ -47,4 +47,4 @@ class LeaveOneOutEnc(TransformPrimitive):
         return transform
 
     def generate_name(self, base_feature_names):
-        return u"%s_%s" % (base_feature_names[0].upper(), 'target')
+        return u"%s_%s" % (base_feature_names[0].upper(), 'leave_one_out')

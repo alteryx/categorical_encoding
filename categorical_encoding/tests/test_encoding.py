@@ -8,10 +8,10 @@ from categorical_encoding.encoders import Encoder
 from categorical_encoding.primitives import (
     BinaryEnc,
     HashingEnc,
+    LeaveOneOutEnc,
     OneHotEnc,
     OrdinalEnc,
-    TargetEnc,
-    LeaveOneOutEnc
+    TargetEnc
 )
 
 
@@ -161,6 +161,12 @@ def test_leave_one_out_encoding():
 
     enc = Encoder(method='leave_one_out')
     fm_encoded = enc.fit_transform(feature_matrix, features, feature_matrix['value'])
+    fm_encoded_data = {'PRODUCT_ID_leave_one_out': [7.5, 5.0, 2.5, 20.0, 15.0, 8.33],
+                       'purchased': [True, True, True, True, True, True],
+                       'value': [0.0, 5.0, 10.0, 15.0, 20.0, 0.0],
+                       'COUNTRYCODE_leave_one_out': [12.5, 11.25, 10.0, 8.75, 7.5, 8.33], }
+    fm_encoded_result = pd.DataFrame(fm_encoded_data)
+    np.testing.assert_almost_equal(fm_encoded.values, fm_encoded_result.values, decimal=1)
 
     encoder = LeaveOneOutEnc(fitted_encoder=enc, category='product_id')
     encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
@@ -174,4 +180,9 @@ def test_leave_one_out_encoding():
 
     features = enc.get_features()
     feature_matrix_new = ft.calculate_feature_matrix(features, es, instance_ids=ids)
-    assert (fm_encoded == feature_matrix_new).all().all()
+    new_data = {'PRODUCT_ID_leave_one_out': [5.0, 5.0, 5.0, 17.5, 17.5, 8.33],
+                'purchased': [True, True, True, True, True, True],
+                'value': [0.0, 5.0, 10.0, 15.0, 20.0, 0.0],
+                'COUNTRYCODE_leave_one_out': [10.0, 10.0, 10.0, 10.0, 10.0, 8.33], }
+    new_result = pd.DataFrame(new_data)
+    np.testing.assert_almost_equal(feature_matrix_new.values, new_result.values, decimal=1)

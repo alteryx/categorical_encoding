@@ -1,10 +1,10 @@
 from .encoder_methods import (
     BinaryEncoder,
     HashingEncoder,
+    LeaveOneOutEncoder,
     OneHotEncoder,
     OrdinalEncoder,
-    TargetEncoder,
-    LeaveOneOutEncoder
+    TargetEncoder
 )
 
 

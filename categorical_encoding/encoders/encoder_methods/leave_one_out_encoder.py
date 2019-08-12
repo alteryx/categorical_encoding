@@ -32,15 +32,13 @@ class LeaveOneOutEncoder():
 
     def fit(self, X, y):
         self.encoder.fit(X, y)
+        self.y = y
         return self
 
     def transform(self, X, features):
-        X_new = self.encoder.transform(X)
-        feature_names = []
-        for feature in features:
-            for fname in feature.get_feature_names():
-                feature_names.append(fname)
-        X_new.columns = feature_names
+        transform_encoder = LeaveOneOut(cols=self.encoder.cols)
+        X_new = transform_encoder.fit_transform(X, self.y)
+        X_new.columns = self._rename_columns(features)
         return X_new
 
     def fit_transform(self, X, features, y=None):
@@ -56,3 +54,10 @@ class LeaveOneOutEncoder():
                 f = ft.Feature([f], primitive=LeaveOneOutEnc(self, f.get_name()))
             feature_list.append(f)
         return feature_list
+
+    def _rename_columns(self, features):
+        feature_names = []
+        for feature in features:
+            for fname in feature.get_feature_names():
+                feature_names.append(fname)
+        return feature_names
