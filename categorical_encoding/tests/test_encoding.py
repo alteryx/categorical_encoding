@@ -185,4 +185,4 @@ def test_leave_one_out_encoding():
                 'value': [0.0, 5.0, 10.0, 15.0, 20.0, 0.0],
                 'COUNTRYCODE_leave_one_out': [10.0, 10.0, 10.0, 10.0, 10.0, 8.333333333333334], }
     new_result = pd.DataFrame(new_data)
-    assert (fm_encoded.values == fm_encoded_result.values).all()
+    assert (feature_matrix_new.values == new_result.values).all()
