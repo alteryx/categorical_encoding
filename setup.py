@@ -8,7 +8,7 @@ with open(path.join(dirname, 'README.md')) as f:
 
 setup(
     name='categorical_encoding',
-    version='0.1.0',
+    version='0.2.0',
     description='categorical encoding for featuretools',
     author='Feature Labs, Inc.',
     author_email='support@featurelabs.com',
