@@ -11,7 +11,7 @@ class HashingEnc(TransformPrimitive):
 
     Parameters:
         fitted_encoder: encoder
-            encoder with the same hash_method as you wish to use here
+            Encoder with the same hash_method as you wish to use here
 
     Examples:
         >>> enc = Encoder(method='Hashing')
