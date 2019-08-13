@@ -40,14 +40,15 @@ class HashingEncoder():
         self.hash_method = 'md5'
         self.n_components = n_components
 
-    def fit(self, X, y=None):
+    def fit(self, X, features, y=None):
         self.cols = Hashing(cols=self.cols, hash_method=self.hash_method, n_components=self.n_components).fit(X, y).cols
         for col in self.cols:
             self.encoder[col] = Hashing(cols=[col], hash_method=self.hash_method, n_components=self.n_components)
             self.encoder[col].fit(X[col], y)
+        self.features = self.encode_features_list(X, features)
         return self
 
-    def transform(self, X, features):
+    def transform(self, X):
         X_new = X.copy()
         index = 0
         for col in self.cols:
@@ -58,7 +59,7 @@ class HashingEncoder():
                 X_new.insert(index, col_enc, new_columns[col_enc], allow_duplicates=True)
 
         feature_names = []
-        for feature in features:
+        for feature in self.features:
             for fname in feature.get_feature_names():
                 feature_names.append(fname)
         X_new.columns = feature_names
@@ -66,7 +67,7 @@ class HashingEncoder():
         return X_new
 
     def fit_transform(self, X, features, y=None):
-        return self.fit(X, y).transform(X, features)
+        return self.fit(X, features, y).transform(X)
 
     def encode_features_list(self, X, features):
         feature_list = []
@@ -81,3 +82,6 @@ class HashingEncoder():
 
     def get_n_components(self):
         return self.n_components
+
+    def get_features(self):
+        return self.features

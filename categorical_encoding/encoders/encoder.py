@@ -49,21 +49,19 @@ class Encoder():
             raise ValueError("'%s' is not a supported encoder. The list of supported String encoder method names is: %s" % (method, encoder_list.keys()))
 
         self.method = method
-        self.features = []
 
     def fit(self, X, features, y=None):
-        self.method.fit(X, y)
-        self._encode_features_list(X, features)
+        self.method.fit(X, features, y)
         return self
 
     def transform(self, X):
-        return self.method.transform(X, self.features)
+        return self.method.transform(X)
 
     def fit_transform(self, X, features, y=None):
-        return self.fit(X, features, y).transform(X)
+        return self.method.fit_transform(X, features, y)
 
     def get_features(self):
-        return self.features
+        return self.method.get_features()
 
     def get_mapping(self, category=0):
         return self.method.get_mapping(category)
@@ -79,4 +77,4 @@ class Encoder():
         return self.method.n_components
 
     def _encode_features_list(self, X, features):
-        self.features = self.method.encode_features_list(X, features)
+        self.method.encode_features_list(X, features)

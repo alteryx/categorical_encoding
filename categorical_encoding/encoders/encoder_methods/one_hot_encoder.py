@@ -41,16 +41,17 @@ class OneHotEncoder():
         self.matrix = None
         self.top_n = top_n
 
-    def fit(self, X, y=None):
+    def fit(self, X, features, y=None):
         self.encoder.fit(X, y=None)
+        self.features = self.encode_features_list(X, features)
         return self
 
-    def transform(self, X, features=None):
+    def transform(self, X):
         assert(self.matrix is not None), "Check that the encoder is fitted."
         return self.matrix
 
     def fit_transform(self, X, features=None, y=None):
-        return self.fit(X, y).transform(X)
+        return self.fit(X, features, y).transform(X)
 
     def get_mapping(self, category):
         if isinstance(category, str):
@@ -88,3 +89,6 @@ class OneHotEncoder():
                 feature_list.append(f)
         self.matrix = X_new
         return feature_list
+
+    def get_features(self):
+        return self.features

@@ -161,12 +161,12 @@ def test_leave_one_out_encoding():
 
     enc = Encoder(method='leave_one_out')
     fm_encoded = enc.fit_transform(feature_matrix, features, feature_matrix['value'])
-    fm_encoded_data = {'PRODUCT_ID_leave_one_out': [7.5, 5.0, 2.5, 20.0, 15.0, 8.33],
-                       'purchased': [True, True, True, True, True, True],
-                       'value': [0.0, 5.0, 10.0, 15.0, 20.0, 0.0],
-                       'COUNTRYCODE_leave_one_out': [12.5, 11.25, 10.0, 8.75, 7.5, 8.33], }
-    fm_encoded_result = pd.DataFrame(fm_encoded_data)
-    np.testing.assert_almost_equal(fm_encoded.values, fm_encoded_result.values, decimal=1)
+    fm_encoded_result = [[7.50001, 5.00001, 2.50001, 20.00001, 15.00001, 8.33333],
+                         [True, True, True, True, True, True],
+                         [0.00001, 5.00001, 10.00001, 15.00001, 20.00001, 0.00001],
+                         [12.50001, 11.250001, 10.00001, 8.750001, 7.50001, 8.33333]]
+    fm_encoded_result = np.swapaxes(fm_encoded_result, 0, 1)
+    np.testing.assert_almost_equal(fm_encoded.values, fm_encoded_result, decimal=1)
 
     encoder = LeaveOneOutEnc(fitted_encoder=enc, category='product_id')
     encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
@@ -180,9 +180,9 @@ def test_leave_one_out_encoding():
 
     features = enc.get_features()
     feature_matrix_new = ft.calculate_feature_matrix(features, es, instance_ids=ids)
-    new_data = {'PRODUCT_ID_leave_one_out': [5.0, 5.0, 5.0, 17.5, 17.5, 8.33],
-                'purchased': [True, True, True, True, True, True],
-                'value': [0.0, 5.0, 10.0, 15.0, 20.0, 0.0],
-                'COUNTRYCODE_leave_one_out': [10.0, 10.0, 10.0, 10.0, 10.0, 8.33], }
-    new_result = pd.DataFrame(new_data)
-    np.testing.assert_almost_equal(feature_matrix_new.values, new_result.values, decimal=1)
+    new_data = [[5.00001, 5.00001, 5.00001, 17.50001, 17.50001, 8.33333],
+                [True, True, True, True, True, True],
+                [0.00001, 5.00001, 10.00001, 15.00001, 20.00001, 0.00001],
+                [10.00001, 10.00001, 10.00001, 10.00001, 10.00001, 8.33333]]
+    new_result = np.swapaxes(new_data, 0, 1)
+    np.testing.assert_almost_equal(feature_matrix_new.values, new_result, decimal=1)
