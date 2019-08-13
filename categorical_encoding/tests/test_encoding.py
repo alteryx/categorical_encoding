@@ -166,6 +166,8 @@ def test_leave_one_out_encoding():
                        'value': [0.00001, 5.00001, 10.00001, 15.00001, 20.00001, 0.00001],
                        'COUNTRYCODE_leave_one_out': [12.50001, 11.250001, 10.00001, 8.750001, 7.50001, 8.33333], }
     fm_encoded_result = pd.DataFrame(fm_encoded_data)
+    print(fm_encoded)
+    print(fm_encoded_data)
     np.testing.assert_almost_equal(fm_encoded.values, fm_encoded_result.values, decimal=2)
 
     encoder = LeaveOneOutEnc(fitted_encoder=enc, category='product_id')
