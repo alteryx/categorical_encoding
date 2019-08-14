@@ -112,15 +112,6 @@ def merge_features_labels(fm, labels):
     return fm.reset_index().merge(labels)
 
 
-def feature_importances(model, features, n=10):
-    importances = model.feature_importances_
-    zipped = sorted(zip(features, importances), key=lambda x: -x[1])
-    for i, f in enumerate(zipped[:n]):
-        print("%d: Feature: %s, %.3f" % (i+1, f[0].get_name(), f[1]))
-
-    return [f[0] for f in zipped[:n]]
-
-
 def machine_learning_score(fm_encoded, label_times):
     X = merge_features_labels(fm_encoded, label_times)
     X.drop(["user_id", "time"], axis=1, inplace=True)

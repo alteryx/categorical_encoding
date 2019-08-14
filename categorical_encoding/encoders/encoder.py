@@ -36,7 +36,7 @@ class Encoder():
             returns n_components (int)
     """
 
-    def __init__(self, method='ordinal', to_encode=None):
+    def __init__(self, method='one_hot', to_encode=None):
         encoder_list = {'ordinal': OrdinalEncoder(cols=to_encode),
                         'binary': BinaryEncoder(cols=to_encode),
                         'hashing': HashingEncoder(cols=to_encode),
