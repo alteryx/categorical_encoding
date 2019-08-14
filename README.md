@@ -1,6 +1,6 @@
 # categorical-encoding
 
-[![CircleCI](https://circleci.com/gh/FeatureLabs/categorical_encoding/tree/master.svg?style=shield)](https://circleci.com/gh/FeatureLabs/categorical_encoding/tree/master)
+[![CircleCI](https://circleci.com/gh/FeatureLabs/categorical_encoding.svg?style=shield&circle-token=625a1d6124154059267ea8477324156b1d645fa9)](https://circleci.com/gh/FeatureLabs/categorical_encoding)
 [![codecov](https://codecov.io/gh/FeatureLabs/categorical_encoding/branch/master/graph/badge.svg)](https://codecov.io/gh/FeatureLabs/categorical_encoding)
 [![Documentation Status](https://readthedocs.org/projects/categorical_encoding/badge/?version=latest)](http://docs.compose.ml/en/latest/?badge=latest)
 
