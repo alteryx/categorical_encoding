@@ -18,7 +18,7 @@ For more general questions regarding how to use categorical encoding in a machin
 ```py
 import categorical_encoding as ce
 
-encoder = ce.Encoder()
+encoder = ce.Encoder(method='ordinal')
 encoder.fit(feature_matrix, features)
 fm_encoded_ordinal = encoder.transform(feature_matrix, features)
 ```
@@ -46,7 +46,7 @@ id
 ```
 Supports easy integration into Featuretools through its support and use of features.
 Learn features through fitting an encoder to data, and then use those features to easily generate new tables of encoded data.
-```
+```py
 >>> features = encoder.get_features()
 [<Feature: PRODUCT_ID_ordinal>,
  <Feature: purchased>,
