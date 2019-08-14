@@ -10,30 +10,15 @@ logger = logging.getLogger('featuretools')
 
 
 class OneHotEncoder():
-    """
-        Maps each categorical value to several columns using one-hot encoding.
+    """Maps each categorical value to several columns using one-hot encoding.
 
-        Parameters:
+    Parameters:
         cols: [str]
             list of column names to encode.
         top_n: int
             number of unique category values to encode (determines the number of resulting columns)
             selects based off of number of occurences of value
             defaults to 15
-
-        Functions:
-        fit:
-            fits encoder to data table
-            returns self
-        transform:
-            encodes matrix and updates features accordingly
-            returns encoded matrix (dataframe)
-        fit_transform:
-            first fits, then transforms matrix
-            returns encoded matrix (dataframe)
-        get_mapping:
-            gets the mapping for the one-hot encoder
-            returns mapping (dict)
     """
 
     def __init__(self, cols=None, top_n=15):
@@ -42,18 +27,30 @@ class OneHotEncoder():
         self.top_n = top_n
 
     def fit(self, X, features, y=None):
+        """Fits encoder to data table.
+        returns self
+        """
         self.encoder.fit(X, y=None)
         self.features = self.encode_features_list(X, features)
         return self
 
     def transform(self, X):
+        """Encodes matrix and updates features accordingly.
+        returns encoded matrix (dataframe)
+        """
         assert(self.matrix is not None), "Check that the encoder is fitted."
         return self.matrix
 
     def fit_transform(self, X, features=None, y=None):
+        """First fits, then transforms matrix.
+        returns encoded matrix (dataframe)
+        """
         return self.fit(X, features, y).transform(X)
 
     def get_mapping(self, category):
+        """Gets the mapping for the one-hot encoder.
+        returns mapping (dict)
+        """
         if isinstance(category, str):
             for map in self.encoder.mapping:
                 if map['col'] == category:

@@ -5,42 +5,36 @@ from categorical_encoding.primitives import LeaveOneOutEnc
 
 
 class LeaveOneOutEncoder():
-    """
-        Maps each categorical value to one column using LeaveOneOut encoding.
+    """Maps each categorical value to one column using LeaveOneOut encoding.
 
-        Parameters:
+    Parameters:
         cols: [str]
             list of column names to encode.
-
-        Functions:
-        fit:
-            fits encoder to data table
-            returns self
-        transform:
-            encodes matrix and updates features accordingly
-            returns encoded matrix (dataframe)
-        fit_transform:
-            first fits, then transforms matrix
-            returns encoded matrix (dataframe)
-        get_mapping:
-            gets the mapping for the LeaveOneOut encoder. Only takes strings of the column name, not the index number.
-            returns mapping (dict)
     """
 
     def __init__(self, cols=None):
         self.encoder = LeaveOneOut(cols=cols)
 
     def fit(self, X, features, y):
+        """Fits encoder to data table.
+        returns self
+        """
         self.encoder.fit(X, y)
         self.features = self.encode_features_list(X, features)
         return self
 
     def transform(self, X):
+        """Encodes matrix and updates features accordingly.
+        returns encoded matrix (dataframe)
+        """
         X_new = self.encoder.transform(X)
         X_new.columns = self._rename_columns(self.features)
         return X_new
 
     def fit_transform(self, X, features, y=None):
+        """First fits, then transforms matrix.
+        returns encoded matrix (dataframe)
+        """
         self.encoder.fit(X, y)
         self.features = self.encode_features_list(X, features)
         X_new = self.encoder.fit_transform(X, y)
@@ -48,6 +42,9 @@ class LeaveOneOutEncoder():
         return X_new
 
     def get_mapping(self, category):
+        """Gets the mapping for the LeaveOneOut encoder. Only takes strings of the column name, not the index number.
+        returns mapping (dict)
+        """
         return self.encoder.mapping[category]
 
     def encode_features_list(self, X, features):

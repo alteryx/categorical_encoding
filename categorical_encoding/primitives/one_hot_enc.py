@@ -6,7 +6,7 @@ from featuretools.variable_types import Categorical, Numeric
 
 
 class OneHotEnc(TransformPrimitive):
-    """Applies one hot encoding for the specific category value to the column
+    """Applies one hot encoding for the specific category value to the column.
 
     Parameters:
         value: str or nan

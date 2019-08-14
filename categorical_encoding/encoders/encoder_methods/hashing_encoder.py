@@ -5,33 +5,15 @@ from categorical_encoding.primitives import HashingEnc
 
 
 class HashingEncoder():
-    """
-        Maps each categorical value to several columns using a specific hash function.
+    """Maps each categorical value to several columns using a specific hash function.
 
-        Parameters:
+    Parameters:
         cols: [str]
             list of column names to encode.
         hash_method: str
             str for hash_method name to use. Any method from hashlib works.
         n_components: int
             integer for the number of columns to map to.
-
-        Functions:
-        fit:
-            fits encoder to data table
-            returns self
-        transform:
-            encodes matrix and updates features accordingly
-            returns encoded matrix (dataframe)
-        fit_transform:
-            fits, then transforms matrix
-            returns encoded matrix (dataframe)
-        get_hash_method:
-            gets the hash_method of the encoder
-            return hash_method (str)
-        get_n_components:
-            gets the number of columns used in the encoder
-            returns n_components (int)
     """
 
     def __init__(self, cols=None, hash_method='md5', n_components=8):
@@ -41,6 +23,9 @@ class HashingEncoder():
         self.n_components = n_components
 
     def fit(self, X, features, y=None):
+        """Fits encoder to data table.
+        returns self
+        """
         self.cols = Hashing(cols=self.cols, hash_method=self.hash_method, n_components=self.n_components).fit(X, y).cols
         for col in self.cols:
             self.encoder[col] = Hashing(cols=[col], hash_method=self.hash_method, n_components=self.n_components)
@@ -49,6 +34,9 @@ class HashingEncoder():
         return self
 
     def transform(self, X):
+        """Encodes matrix and updates features accordingly.
+        returns encoded matrix (dataframe)
+        """
         X_new = X.copy()
         index = 0
         for col in self.cols:
@@ -67,6 +55,9 @@ class HashingEncoder():
         return X_new
 
     def fit_transform(self, X, features, y=None):
+        """Fits, then transforms matrix.
+        returns encoded matrix (dataframe)
+        """
         return self.fit(X, features, y).transform(X)
 
     def encode_features_list(self, X, features):
@@ -78,9 +69,13 @@ class HashingEncoder():
         return feature_list
 
     def get_hash_method(self):
+        """Gets the hash_method of the encoder.
+        return hash_method (str)"""
         return self.hash_method
 
     def get_n_components(self):
+        """Gets the number of columns used in the encoder.
+        returns n_components (int)"""
         return self.n_components
 
     def get_features(self):

@@ -5,37 +5,28 @@ from categorical_encoding.primitives import TargetEnc
 
 
 class TargetEncoder():
-    """
-        Maps each categorical value to one column using target encoding.
+    """Maps each categorical value to one column using target encoding.
 
-        Parameters:
+    Parameters:
         cols: [str]
             list of column names to encode.
-
-        Functions:
-        fit:
-            fits encoder to data table
-            returns self
-        transform:
-            encodes matrix and updates features accordingly
-            returns encoded matrix (dataframe)
-        fit_transform:
-            first fits, then transforms matrix
-            returns encoded matrix (dataframe)
-        get_mapping:
-            gets the mapping for the target encoder. Only takes strings of the column name, not the index number.
-            returns tuple of dict (mapping, mapping of corresponding ordinal encoder)
     """
 
     def __init__(self, cols=None):
         self.encoder = Target(cols=cols)
 
     def fit(self, X, features, y):
+        """Fits encoder to data table based on given target column.
+        returns self
+        """
         self.encoder.fit(X, y)
         self.features = self.encode_features_list(X, features)
         return self
 
     def transform(self, X):
+        """Encodes matrix and updates features accordingly.
+        returns encoded matrix (dataframe)
+        """
         X_new = self.encoder.transform(X)
         feature_names = []
         for feature in self.features:
@@ -45,9 +36,15 @@ class TargetEncoder():
         return X_new
 
     def fit_transform(self, X, features, y=None):
+        """First fits, then transforms matrix.
+        returns encoded matrix (dataframe)
+        """
         return self.fit(X, features, y).transform(X)
 
     def get_mapping(self, category):
+        """Gets the mapping for the target encoder. Only takes strings of the column name, not the index number.
+        returns tuple of dict (mapping, mapping of corresponding ordinal encoder)
+        """
         def mapping_helper(method, category):
             if isinstance(category, str):
                 for map in method.mapping:

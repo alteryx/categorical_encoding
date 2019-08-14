@@ -6,8 +6,7 @@ from featuretools.variable_types import Categorical, Numeric
 
 
 class BinaryEnc(TransformPrimitive):
-    """Applies a fitted Binary Encoder to the values.
-    Requires an already fitted encoder.
+    """Applies a fitted Binary Encoder to the values. Requires an already fitted encoder.
 
     Parameters:
         fitted_encoder: encoder

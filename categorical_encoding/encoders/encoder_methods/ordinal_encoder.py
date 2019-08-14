@@ -5,37 +5,28 @@ from categorical_encoding.primitives import OrdinalEnc
 
 
 class OrdinalEncoder():
-    """
-        Maps each categorical value to one column using ordinal encoding.
+    """Maps each categorical value to one column using ordinal encoding.
 
-        Parameters:
+    Parameters:
         cols: [str]
             list of column names to encode.
-
-        Functions:
-        fit:
-            fits encoder to data table
-            returns self
-        transform:
-            encodes matrix and updates features accordingly
-            returns encoded matrix (dataframe)
-        fit_transform:
-            first fits, then transforms matrix
-            returns encoded matrix (dataframe)
-        get_mapping:
-            gets the mapping the ordinal encoder
-            returns mapping (dict)
     """
 
     def __init__(self, cols=None):
         self.encoder = Ordinal(cols=cols)
 
     def fit(self, X, features, y=None):
+        """Fits encoder to data table.
+        returns self
+        """
         self.encoder.fit(X, y=None)
         self.features = self.encode_features_list(X, features)
         return self
 
     def transform(self, X):
+        """Encodes matrix and updates features accordingly.
+        returns encoded matrix (dataframe)
+        """
         X_new = self.encoder.transform(X)
         feature_names = []
         for feature in self.features:
@@ -45,9 +36,15 @@ class OrdinalEncoder():
         return X_new
 
     def fit_transform(self, X, features, y=None):
+        """First fits, then transforms matrix.
+        returns encoded matrix (dataframe)
+        """
         return self.fit(X, features, y).transform(X)
 
     def get_mapping(self, category):
+        """Gets the mapping the ordinal encoder.
+        returns mapping (dict)
+        """
         if isinstance(category, str):
             for map in self.encoder.mapping:
                 if map['col'] == category:
