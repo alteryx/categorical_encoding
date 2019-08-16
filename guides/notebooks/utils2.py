@@ -5,7 +5,7 @@ import os
 import xgboost as xgb
 from sklearn.model_selection import KFold, train_test_split
 from sklearn.metrics import r2_score
-import category_encoders as ce
+import categorical_encoding as ce
 import time
 
 def load_entityset(data_dir):
@@ -81,7 +81,7 @@ def load_entityset(data_dir):
     air_reserve = air_reserve.rename(columns={'air_store_id': 'store_id'})
     
     # We combine and create the unique visit id from the store id and datetime.
-    combined_reserve = (pd.concat([air_reserve, hpg_reserve], ignore_index=True)
+    combined_reserve = (pd.concat([air_reserve, hpg_reserve], ignore_index=True, sort=True)
                     .reset_index(drop=True)
                     .sort_values(['reserve_datetime']))
     combined_reserve['visit_date'] = pd.to_datetime(pd.to_datetime(combined_reserve['visit_datetime']).dt.date)
@@ -128,16 +128,13 @@ def load_entityset(data_dir):
     return es
 
 
-def bayesian_encoder_results(feature_matrix):
+def bayesian_encoder_results(feature_matrix, features):
     X = feature_matrix.drop('visitors', axis=1)
     X = X.fillna(0)
     y = feature_matrix['visitors']
 
-    bayesian_encoders = [ce.TargetEncoder(),
-                         ce.LeaveOneOutEncoder(),
-                         #ce.WOEEncoder(),
-                         ce.JamesSteinEncoder(),
-                         ce.MEstimateEncoder()]
+    bayesian_encoders = [ce.Encoder(method='target'),
+                         ce.Encoder(method='leave_one_out')]
     bayesian_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', ])
     for encoder in bayesian_encoders:
         encoder_name = str(encoder)[:str(encoder).find('(')]
@@ -147,11 +144,7 @@ def bayesian_encoder_results(feature_matrix):
         for i in range(3):
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
-            if encoder_name == 'WOEEncoder':
-                encoder.fit(X_train, 
-                            y_train)
-            else:
-                encoder.fit(X_train, y_train)
+            encoder.fit(X_train, features, y_train)
 
             X_train_encoded = encoder.transform(X_train)
             X_test_encoded = encoder.transform(X_test)
@@ -172,12 +165,12 @@ def bayesian_encoder_results(feature_matrix):
     return bayesian_results
 
 
-def classic_encoder_results(feature_matrix):
+def classic_encoder_results(feature_matrix, features):
     X = feature_matrix.drop('visitors', axis=1)
     X = X.fillna(0)
     y = feature_matrix['visitors']
 
-    classic_encoders = [ce.OrdinalEncoder(), ce.OneHotEncoder(), ce.BinaryEncoder(), ce.HashingEncoder()]
+    classic_encoders = [ce.Encoder(method='ordinal'), ce.Encoder(method='one_hot'), ce.Encoder(method='binary'), ce.Encoder(method='hashing')]
     classic_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', 'Elapsed Time'])
     for encoder in classic_encoders:
         encoder_name = str(encoder)[:str(encoder).find('(')]
@@ -185,7 +178,7 @@ def classic_encoder_results(feature_matrix):
         
         scores = []
         for i in range(3):
-            X_encoded = encoder.fit_transform(X)
+            X_encoded = encoder.fit_transform(X, features)
 
             X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3)
             model = create_xgb_model(X_train, X_test, y_train, y_test)
