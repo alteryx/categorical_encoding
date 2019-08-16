@@ -81,3 +81,6 @@ class HashingEncoder():
 
     def get_features(self):
         return self.features
+
+    def get_name(self):
+        return self.name

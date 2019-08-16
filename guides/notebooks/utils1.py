@@ -124,9 +124,10 @@ def machine_learning_score(fm_encoded, label_times):
 
     return "AUC %.2f +/- %.2f" % (scores.mean(), scores.std())
 
-def classic_encoder_results(feature_matrix, features, label_times):
+def encoder_results(feature_matrix, features, label_times):
+    # classic encoders
     classic_encoders = [ce.Encoder(method='ordinal'), ce.Encoder(method='one_hot'), ce.Encoder(method='binary'), ce.Encoder(method='hashing')]
-    classic_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', 'Elapsed Time'])
+    results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', 'Elapsed Time'])
     
     for encoder in classic_encoders:
         start_time = time.time()
@@ -134,15 +135,13 @@ def classic_encoder_results(feature_matrix, features, label_times):
         fm_encoded['label'] = feature_matrix['label']
         score = machine_learning_score(fm_encoded, label_times)
 
-        classic_results = classic_results.append({'Encoder': encoder.method,
-                                                  'Score': score,
-                                                  '# Columns': len(fm_encoded.columns),
-                                                  'Elapsed Time': time.time() - start_time},
-                                                 ignore_index=True)
-    
-    return classic_results
+        results = results.append({'Encoder': encoder.get_name(),
+                                  'Score': score,
+                                  '# Columns': len(fm_encoded.columns),
+                                  'Elapsed Time': time.time() - start_time},
+                                  ignore_index=True)
 
-def bayesian_encoder_results(feature_matrix, features, label_times):
+    # Bayesian encoders
     kf = KFold(n_splits=3)
 
     X = merge_features_labels(feature_matrix, label_times)
@@ -154,7 +153,6 @@ def bayesian_encoder_results(feature_matrix, features, label_times):
                          ce.Encoder(method='leave_one_out'),]
     bayesian_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', ])
     for encoder in bayesian_encoders:
-        encoder_name = str(encoder)[:str(encoder).find('(')]
         start_time = time.time()
         scores = []
         
@@ -174,9 +172,19 @@ def bayesian_encoder_results(feature_matrix, features, label_times):
         scores = np.array(scores)
         score = "AUC %.2f +/- %.2f" % (scores.mean(), scores.std())
 
-        bayesian_results = bayesian_results.append({'Encoder': encoder_name,
-                                                    'Score': score,
-                                                    '# Columns': len(X_train.columns),
-                                                    'Elapsed Time': time.time() - start_time},
-                                                   ignore_index=True)
-    return bayesian_results
+        results = results.append({'Encoder': encoder.get_name(),
+                                  'Score': score,
+                                  '# Columns': len(X_train.columns),
+                                  'Elapsed Time': time.time() - start_time},
+                                  ignore_index=True)
+    
+    fm_no_categoricals = feature_matrix.select_dtypes(['number'])
+    start_times = time.time()
+    score = machine_learning_score(fm_no_categoricals, label_times)
+    results = results.append({'Encoder': 'no_categoricals',
+                              'Score': score,
+                              '# Columns': len(fm_no_categoricals.columns),
+                              'Elapsed Time': time.time() - start_time},
+                              ignore_index=True)
+    return results
+    
