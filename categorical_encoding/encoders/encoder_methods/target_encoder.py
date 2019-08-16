@@ -11,6 +11,7 @@ class TargetEncoder():
         cols: [str]
             list of column names to encode.
     """
+    name = 'target'
 
     def __init__(self, cols=None):
         self.encoder = Target(cols=cols)
@@ -64,3 +65,6 @@ class TargetEncoder():
 
     def get_features(self):
         return self.features
+
+    def get_name(self):
+        return self.name

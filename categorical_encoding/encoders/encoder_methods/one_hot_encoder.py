@@ -20,6 +20,7 @@ class OneHotEncoder():
             selects based off of number of occurences of value
             defaults to 15
     """
+    name = 'one_hot'
 
     def __init__(self, cols=None, top_n=15):
         self.encoder = OneHot(cols=cols)
@@ -89,3 +90,6 @@ class OneHotEncoder():
 
     def get_features(self):
         return self.features
+
+    def get_name(self):
+        return self.name

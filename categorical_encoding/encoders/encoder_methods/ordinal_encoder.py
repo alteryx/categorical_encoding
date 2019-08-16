@@ -11,6 +11,7 @@ class OrdinalEncoder():
         cols: [str]
             list of column names to encode.
     """
+    name = 'ordinal'
 
     def __init__(self, cols=None):
         self.encoder = Ordinal(cols=cols)
@@ -63,3 +64,6 @@ class OrdinalEncoder():
 
     def get_features(self):
         return self.features
+
+    def get_name(self):
+        return self.name

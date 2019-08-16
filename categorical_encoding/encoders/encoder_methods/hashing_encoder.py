@@ -15,6 +15,7 @@ class HashingEncoder():
         n_components: int
             integer for the number of columns to map to.
     """
+    name = 'hashing'
 
     def __init__(self, cols=None, hash_method='md5', n_components=8):
         self.encoder = {}

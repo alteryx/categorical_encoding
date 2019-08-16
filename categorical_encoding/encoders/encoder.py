@@ -78,3 +78,6 @@ class Encoder():
 
     def _encode_features_list(self, X, features):
         self.method.encode_features_list(X, features)
+
+    def get_name(self):
+        return self.method.get_name()

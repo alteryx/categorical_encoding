@@ -4,7 +4,7 @@ import numpy as np
 import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score, KFold
-import category_encoders as ce
+import categorical_encoding as ce
 import time
 
 def load_entityset(data_dir):
@@ -124,17 +124,17 @@ def machine_learning_score(fm_encoded, label_times):
 
     return "AUC %.2f +/- %.2f" % (scores.mean(), scores.std())
 
-def classic_encoder_results(feature_matrix, label_times):
-    classic_encoders = [ce.OrdinalEncoder(), ce.OneHotEncoder(), ce.BinaryEncoder(), ce.HashingEncoder()]
+def classic_encoder_results(feature_matrix, features, label_times):
+    classic_encoders = [ce.Encoder(method='ordinal'), ce.Encoder(method='one_hot'), ce.Encoder(method='binary'), ce.Encoder(method='hashing')]
     classic_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', 'Elapsed Time'])
     
     for encoder in classic_encoders:
         start_time = time.time()
-        fm_encoded = encoder.fit_transform(feature_matrix)
+        fm_encoded = encoder.fit_transform(feature_matrix.drop(['label'], axis=1), features)
+        fm_encoded['label'] = feature_matrix['label']
         score = machine_learning_score(fm_encoded, label_times)
-        encoder_name = str(encoder)[:str(encoder).find('(')]
 
-        classic_results = classic_results.append({'Encoder': encoder_name,
+        classic_results = classic_results.append({'Encoder': encoder.method,
                                                   'Score': score,
                                                   '# Columns': len(fm_encoded.columns),
                                                   'Elapsed Time': time.time() - start_time},
@@ -142,19 +142,16 @@ def classic_encoder_results(feature_matrix, label_times):
     
     return classic_results
 
-def bayesian_encoder_results(feature_matrix, label_times):
+def bayesian_encoder_results(feature_matrix, features, label_times):
     kf = KFold(n_splits=3)
 
     X = merge_features_labels(feature_matrix, label_times)
     X.drop(["user_id", "time"], axis=1, inplace=True)
     X = X.fillna(0)
-    y = X.pop("label")
+    y = X.pop('label')
 
-    bayesian_encoders = [ce.TargetEncoder(),
-                         ce.LeaveOneOutEncoder(),
-                         ce.WOEEncoder(),
-                         ce.JamesSteinEncoder(),
-                         ce.MEstimateEncoder()]
+    bayesian_encoders = [ce.Encoder(method='target'),
+                         ce.Encoder(method='leave_one_out'),]
     bayesian_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', ])
     for encoder in bayesian_encoders:
         encoder_name = str(encoder)[:str(encoder).find('(')]
@@ -165,11 +162,7 @@ def bayesian_encoder_results(feature_matrix, label_times):
             X_train, X_test = X.iloc[train_index], X.iloc[test_index]
             y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
-            if encoder_name == 'WOEEncoder':
-                encoder.fit(X_train, 
-                            y_train)
-            else:
-                encoder.fit(X_train, 
+            encoder.fit(X_train, features,
                         X_train['COUNT(order_products WHERE product_name = Banana)'])
             X_train = encoder.transform(X_train)
             X_test = encoder.transform(X_test)

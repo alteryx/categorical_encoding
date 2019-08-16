@@ -11,6 +11,7 @@ class LeaveOneOutEncoder():
         cols: [str]
             list of column names to encode.
     """
+    name = 'leave_one_out'
 
     def __init__(self, cols=None):
         self.encoder = LeaveOneOut(cols=cols)
@@ -64,3 +65,6 @@ class LeaveOneOutEncoder():
 
     def get_features(self):
         return self.features
+
+    def get_name(self):
+        return self.name

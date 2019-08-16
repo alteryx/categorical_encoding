@@ -11,6 +11,7 @@ class BinaryEncoder():
         cols: [str]
             list of column names to encode.
     """
+    name = 'binary'
 
     def __init__(self, cols=None):
         self.encoder = Binary(cols=cols)
@@ -68,3 +69,6 @@ class BinaryEncoder():
 
     def get_features(self):
         return self.features
+
+    def get_name(self):
+        return self.name
