@@ -1,8 +1,6 @@
 # categorical-encoding
 
 [![CircleCI](https://circleci.com/gh/FeatureLabs/categorical_encoding.svg?style=shield&circle-token=625a1d6124154059267ea8477324156b1d645fa9)](https://circleci.com/gh/FeatureLabs/categorical_encoding)
-[![codecov](https://codecov.io/gh/FeatureLabs/categorical_encoding/branch/master/graph/badge.svg)](https://codecov.io/gh/FeatureLabs/categorical_encoding)
-[![Documentation Status](https://readthedocs.org/projects/categorical_encoding/badge/?version=latest)](https://docs.featuretools.com/index.html)
 
 categorical-encoding is a Python library for encoding categorical data, intended for use with [Featuretools](https://github.com/Featuretools/featuretools). 
 categorical-encoding allows for easy encoding of data and integration into Featuretools pipeline for automated feature engineering within the machine learning pipeline.
@@ -16,13 +14,6 @@ python -m pip install "featuretools[categorical_encoding]"
 For more general questions regarding how to use categorical encoding in a machine learning pipeline, consult the guides located in the [categorical encoding github repository](https://github.com/FeatureLabs/categorical_encoding/tree/master/guides).
 
 ```py
-import categorical_encoding as ce
-
-encoder = ce.Encoder(method='ordinal')
-encoder.fit(feature_matrix, features)
-fm_encoded_ordinal = encoder.transform(feature_matrix, features)
-```
-```py
 >>> feature_matrix
     product_id  purchased  value countrycode
 id                                          
@@ -33,34 +24,59 @@ id
 4          car       True   20.0          US
 5   toothpaste       True    0.0          AL
 ```
+Integrates into standard procedure of train/test split within applied machine learning processes.
 ```py
->>> fm_encoded_ordinal
-    PRODUCT_ID_ordinal  purchased  value  COUNTRYCODE_ordinal
-id                                                           
-0                    1       True    0.0                    1
-1                    1       True    5.0                    1
-2                    1       True   10.0                    1
-3                    2       True   15.0                    1
-4                    2       True   20.0                    1
-5                    3       True    0.0                    2
+>>> train_data = feature_matrix.iloc[[0, 1, 4, 5]]
+>>> train_data
+    product_id  purchased  value countrycode
+id                                          
+0    coke zero       True    0.0          US
+1    coke zero       True    5.0          US
+4          car       True   20.0          US
+5   toothpaste       True    0.0          AL
+>>> test_data = feature_matrix.iloc[[2, 3]]
+>>> test_data
+   product_id  purchased  value countrycode
+id                                         
+2   coke zero       True   10.0          US
+3         car       True   15.0          US
+```
+```py
+>>> import categorical_encoding as ce
+>>> encoder = ce.Encoder(method='leave_one_out')
+>>> train_enc = encoder.fit_transform(train_data, features, train_data['value'])
+>>> test_enc = encoder.transform(test_data)
+```
+Encoder fits and transforms to train data, and then transforms test data using its learned fitted encoding.
+```py
+>>> train_enc
+    PRODUCT_ID_leave_one_out  purchased  value  COUNTRYCODE_leave_one_out
+id                                                                       
+0                       5.00       True    0.0                      12.50
+1                       0.00       True    5.0                      10.00
+4                       6.25       True   20.0                       2.50
+5                       6.25       True    0.0                       6.25
+>>> test_enc
+    PRODUCT_ID_leave_one_out  purchased  value  COUNTRYCODE_leave_one_out
+id                                                                       
+2                       2.50       True   10.0                   8.333333
+3                       6.25       True   15.0                   8.333333
 ```
 Supports easy integration into Featuretools through its support and use of features.
-Learn features through fitting an encoder to data, and then use those features to easily generate new tables of encoded data.
+First, learn features through fitting an encoder to data. Then, when new data comes in, easily prepare it for your trained machine learning model by using those features to seamlessly generate new tables of encoded data.
 ```py
 >>> features = encoder.get_features()
-[<Feature: PRODUCT_ID_ordinal>,
+[<Feature: PRODUCT_ID_leave_one_out>,
  <Feature: purchased>,
  <Feature: value>,
- <Feature: COUNTRYCODE_ordinal>]
->>> feature_matrix_2 = ft.calculate_feature_matrix(features, es)
-    PRODUCT_ID_ordinal  purchased  value  COUNTRYCODE_ordinal
-id                                                           
-0                    1       True    0.0                    1
-1                    1       True    5.0                    1
-2                    1       True   10.0                    1
-3                    2       True   15.0                    1
-4                    2       True   20.0                    1
-5                    3       True    0.0                    2
+ <Feature: COUNTRYCODE_leave_one_out>]
+>>> features_encoded = enc.get_features()
+>>> fm2_encoded = ft.calculate_feature_matrix(features_encoded, es, instance_ids=[6,7])
+>>> fm2_encoded
+    PRODUCT_ID_leave_one_out  purchased  value  COUNTRYCODE_leave_one_out
+id                                                                       
+6                       6.25       True    1.0                       6.25
+7                       6.25       True    2.0                       6.25
 ```
 
 ## Feature Labs
