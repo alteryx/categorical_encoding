@@ -144,7 +144,12 @@ def bayesian_encoder_results(feature_matrix, features):
         for i in range(3):
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
+            features_old = features.copy()
+            features.remove('visitors')
             encoder.fit(X_train, features, y_train)
+            print(len(features))
+            features = features_old
+            print(len(features))
 
             X_train_encoded = encoder.transform(X_train)
             X_test_encoded = encoder.transform(X_test)
@@ -153,8 +158,6 @@ def bayesian_encoder_results(feature_matrix, features):
             dtest = xgb.DMatrix(X_test_encoded)
             preds = model.predict(dtest)
             scores.append(r2_score(y_test, preds, multioutput='variance_weighted'))
-        
-        scores = np.array(scores)
         score = "SCORE: %.2f +/- %.2f" % (scores.mean(), scores.std())
 
         bayesian_results = bayesian_results.append({'Encoder': encoder_name,
@@ -162,32 +165,29 @@ def bayesian_encoder_results(feature_matrix, features):
                                                     '# Columns': len(X_train.columns),
                                                     'Average Elapsed Time': (time.time() - start_time) / 3},
                                                    ignore_index=True)
+    print(len(features))
     return bayesian_results
 
 
 def classic_encoder_results(feature_matrix, features):
-    X = feature_matrix.drop('visitors', axis=1)
-    X = X.fillna(0)
-    y = feature_matrix['visitors']
-
+    print(len(features))
     classic_encoders = [ce.Encoder(method='ordinal'), ce.Encoder(method='one_hot'), ce.Encoder(method='binary'), ce.Encoder(method='hashing')]
     classic_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', 'Elapsed Time'])
     for encoder in classic_encoders:
         encoder_name = str(encoder)[:str(encoder).find('(')]
         start_time = time.time()
         
-        scores = []
-        for i in range(3):
-            X_encoded = encoder.fit_transform(X, features)
+        X_encoded = encoder.fit_transform(feature_matrix, features)
 
-            X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3)
-            model = create_xgb_model(X_train, X_test, y_train, y_test)
-            dtest = xgb.DMatrix(X_test)
-            preds = model.predict(dtest)
-            scores.append(r2_score(y_test, preds, multioutput='variance_weighted'))
+        X_encoded = X_encoded.drop('visitors', axis=1)
+        X_encoded = X_encoded.fillna(0)
+        y = feature_matrix['visitors']
 
-        scores = np.array(scores)
-        score = "SCORE: %.2f +/- %.2f" % (scores.mean(), scores.std())
+        X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3)
+        model = create_xgb_model(X_train, X_test, y_train, y_test)
+        dtest = xgb.DMatrix(X_test)
+        preds = model.predict(dtest)
+        score = "SCORE: %.2f" % (r2_score(y_test, preds, multioutput='variance_weighted'))
 
         classic_results = classic_results.append({'Encoder': encoder_name,
                                                   'Score': score,
