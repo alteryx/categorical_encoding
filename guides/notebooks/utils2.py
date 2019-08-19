@@ -158,6 +158,8 @@ def bayesian_encoder_results(feature_matrix, features):
             dtest = xgb.DMatrix(X_test_encoded)
             preds = model.predict(dtest)
             scores.append(r2_score(y_test, preds, multioutput='variance_weighted'))
+        
+        scores = np.array(scores)
         score = "SCORE: %.2f +/- %.2f" % (scores.mean(), scores.std())
 
         bayesian_results = bayesian_results.append({'Encoder': encoder_name,
