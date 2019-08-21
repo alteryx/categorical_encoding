@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/FeatureLabs/categorical_encoding.svg?style=shield&circle-token=625a1d6124154059267ea8477324156b1d645fa9)](https://circleci.com/gh/FeatureLabs/categorical_encoding)
 
 categorical-encoding is a Python library for encoding categorical data, intended for use with [Featuretools](https://github.com/Featuretools/featuretools). 
-categorical-encoding allows for easy encoding of data and integration into Featuretools pipeline for automated feature engineering within the machine learning pipeline.
+categorical-encoding allows for seamless encoding of data and integration into Featuretools pipeline for automated feature engineering within the machine learning pipeline.
 
 ### Install
 ```shell

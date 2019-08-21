@@ -19,6 +19,7 @@ class OneHotEncoder():
             number of unique category values to encode (determines the number of resulting columns)
             selects based off of number of occurences of value
             defaults to 15
+            'None' will result in all unique values being encoded.
     """
     name = 'one_hot'
 
@@ -69,6 +70,8 @@ class OneHotEncoder():
             if f.get_name() in self.encoder.cols:
                 val_counts = X[f.get_name()].value_counts().to_frame()
                 val_counts.sort_values(f.get_name(), ascending=False)
+                if self.top_n is None:
+                    self.top_n = len(val_counts)
                 unique = val_counts.head(self.top_n).index.tolist()
 
                 index = X_new.columns.get_loc(f.get_name())

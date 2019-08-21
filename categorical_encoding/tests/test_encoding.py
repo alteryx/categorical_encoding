@@ -13,6 +13,7 @@ from categorical_encoding.primitives import (
     OrdinalEnc,
     TargetEnc
 )
+from categorical_encoding.encoders.encoder_methods import OneHotEncoder
 
 
 def test_ordinal_encoding():
@@ -186,3 +187,43 @@ def test_leave_one_out_encoding():
                 [10.00001, 10.00001, 10.00001, 10.00001, 10.00001, 8.33333]]
     new_result = np.swapaxes(new_data, 0, 1)
     np.testing.assert_almost_equal(feature_matrix_new.values, new_result, decimal=1)
+
+def test_one_hot_top_n():
+    feature_matrix, features, f1, f2, f3, f4, es, ids = create_feature_matrix()
+
+    feature_matrix['countrycode'][0] = np.nan
+    enc = Encoder(method=OneHotEncoder(top_n=2))
+    fm_encoded = enc.fit_transform(feature_matrix, features)
+
+    encoder = OneHotEnc(value='coke zero')
+    encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero'])
+    encoded_results = [0, 0, 1, 1]
+    assert (encoded == encoded_results).all()
+
+    encoder = OneHotEnc(value=np.nan)
+    encoded = encoder(['car', 'toothpaste', 'coke zero', 'coke zero', np.nan])
+    encoded_results = [0, 0, 0, 0, 1]
+    assert (encoded == encoded_results).all()
+
+    f1_1 = ft.Feature([f1], primitive=OneHotEnc('coke zero'))
+    f1_2 = ft.Feature([f1], primitive=OneHotEnc('car'))
+
+    f4_1 = ft.Feature([f4], primitive=OneHotEnc('US'))
+    f4_2 = ft.Feature([f4], primitive=OneHotEnc('AL'))
+    f4_3 = ft.Feature([f4], primitive=OneHotEnc(np.nan))
+    features_encoded = [f1_1, f1_2, f2, f3, f4_1, f4_2, f4_3]
+    assert len(features_encoded) == len(enc.get_features())
+    for i in range(len(features_encoded)):
+        assert features_encoded[i].unique_name() == enc.get_features()[i].unique_name()
+
+    features_encoded = enc.get_features()
+    feature_matrix = ft.calculate_feature_matrix(features_encoded, es, instance_ids=[6, 7])
+    data = {'product_id = coke zero': [0, 0],
+            'product_id = car': [0, 0],
+            'purchased': [True, True],
+            'value': [1.0, 2.0],
+            'countrycode = US': [0, 0],
+            'countrycode = AL': [1, 1],
+            'countrycode = nan': [0, 0]}
+    fm_encoded = pd.DataFrame(data, index=[6, 7])
+    assert feature_matrix.eq(fm_encoded).all().all()
