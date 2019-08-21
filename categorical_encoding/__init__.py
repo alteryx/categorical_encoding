@@ -5,4 +5,4 @@ import categorical_encoding.encoders
 import categorical_encoding.primitives
 import categorical_encoding.tests
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'

@@ -142,14 +142,14 @@ def encoder_results(feature_matrix, features):
     model = create_xgb_model(X_train, X_test, y_train, y_test)
     dtest = xgb.DMatrix(X_test)
     preds = model.predict(dtest)
-    score = r2_score(y_test, preds, multioutput='variance_weighted')
+    score = "%.2f" % r2_score(y_test, preds, multioutput='variance_weighted')
     results = results.append({'Encoder': 'no_categoricals',
                               'Score': score,
                               '# Columns': len(fm_no_categoricals.columns),
                               'Average Elapsed Time': time.time() - start_time},
                               ignore_index=True)
     
-    return pd.concat([bayesian_results, classic_results, results])
+    return pd.concat([bayesian_results, classic_results, results], ignore_index=True)
 
 
 def bayesian_encoder_results(feature_matrix, features):
@@ -194,7 +194,7 @@ def bayesian_encoder_results(feature_matrix, features):
 
 
 def classic_encoder_results(feature_matrix, features):
-    classic_encoders = [ce.Encoder(method='ordinal'), ce.Encoder(method='one_hot'), ce.Encoder(method='binary'), ce.Encoder(method='hashing')]
+    classic_encoders = [ce.Encoder(method='ordinal'), ce.Encoder(method=ce.encoders.encoder_methods.OneHotEncoder(top_n=None)), ce.Encoder(method='binary'), ce.Encoder(method='hashing')]
     classic_results = pd.DataFrame(columns=['Encoder', 'Score', '# Columns', 'Average Elapsed Time'])
     for encoder in classic_encoders:
         start_time = time.time()
