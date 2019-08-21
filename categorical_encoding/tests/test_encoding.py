@@ -5,6 +5,7 @@ import pandas as pd
 from .testing_utils import create_feature_matrix
 
 from categorical_encoding.encoders import Encoder
+from categorical_encoding.encoders.encoder_methods import OneHotEncoder
 from categorical_encoding.primitives import (
     BinaryEnc,
     HashingEnc,
@@ -13,7 +14,6 @@ from categorical_encoding.primitives import (
     OrdinalEnc,
     TargetEnc
 )
-from categorical_encoding.encoders.encoder_methods import OneHotEncoder
 
 
 def test_ordinal_encoding():
@@ -187,6 +187,7 @@ def test_leave_one_out_encoding():
                 [10.00001, 10.00001, 10.00001, 10.00001, 10.00001, 8.33333]]
     new_result = np.swapaxes(new_data, 0, 1)
     np.testing.assert_almost_equal(feature_matrix_new.values, new_result, decimal=1)
+
 
 def test_one_hot_top_n():
     feature_matrix, features, f1, f2, f3, f4, es, ids = create_feature_matrix()
