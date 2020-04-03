@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/FeatureLabs/categorical_encoding.svg?style=shield&circle-token=625a1d6124154059267ea8477324156b1d645fa9)](https://circleci.com/gh/FeatureLabs/categorical_encoding)
 
-categorical-encoding is a Python library for encoding categorical data, intended for use with [Featuretools](https://github.com/Featuretools/featuretools). 
+categorical-encoding is a Python library for encoding categorical data, intended for use with [Featuretools](https://github.com/Featuretools/featuretools).
 categorical-encoding allows for seamless encoding of data and integration into Featuretools pipeline for automated feature engineering within the machine learning pipeline.
 
 ### Install
@@ -11,12 +11,18 @@ python -m pip install "featuretools[categorical_encoding]"
 ```
 
 ### Description
+
+#### Install Demo Guide Requirements
+```shell
+python -m pip install demo-requirements.txt
+```
+
 For more general questions regarding how to use categorical encoding in a machine learning pipeline, consult the guides located in the [categorical encoding github repository](https://github.com/FeatureLabs/categorical_encoding/tree/master/guides).
 
 ```py
 >>> feature_matrix
     product_id  purchased  value countrycode
-id                                          
+id
 0    coke zero       True    0.0          US
 1    coke zero       True    5.0          US
 2    coke zero       True   10.0          US
@@ -29,7 +35,7 @@ Integrates into standard procedure of train/test split within applied machine le
 >>> train_data = feature_matrix.iloc[[0, 1, 4, 5]]
 >>> train_data
     product_id  purchased  value countrycode
-id                                          
+id
 0    coke zero       True    0.0          US
 1    coke zero       True    5.0          US
 4          car       True   20.0          US
@@ -37,7 +43,7 @@ id
 >>> test_data = feature_matrix.iloc[[2, 3]]
 >>> test_data
    product_id  purchased  value countrycode
-id                                         
+id
 2   coke zero       True   10.0          US
 3         car       True   15.0          US
 ```
@@ -51,14 +57,14 @@ Encoder fits and transforms to train data, and then transforms test data using i
 ```py
 >>> train_enc
     PRODUCT_ID_leave_one_out  purchased  value  COUNTRYCODE_leave_one_out
-id                                                                       
+id
 0                       5.00       True    0.0                      12.50
 1                       0.00       True    5.0                      10.00
 4                       6.25       True   20.0                       2.50
 5                       6.25       True    0.0                       6.25
 >>> test_enc
     PRODUCT_ID_leave_one_out  purchased  value  COUNTRYCODE_leave_one_out
-id                                                                       
+id
 2                       2.50       True   10.0                   8.333333
 3                       6.25       True   15.0                   8.333333
 ```
@@ -74,7 +80,7 @@ First, learn features through fitting an encoder to data. Then, when new data co
 >>> fm2_encoded = ft.calculate_feature_matrix(features_encoded, es, instance_ids=[6,7])
 >>> fm2_encoded
     PRODUCT_ID_leave_one_out  purchased  value  COUNTRYCODE_leave_one_out
-id                                                                       
+id
 6                       6.25       True    1.0                       6.25
 7                       6.25       True    2.0                       6.25
 ```
