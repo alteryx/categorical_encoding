@@ -16,7 +16,7 @@ lint-fix:
 
 .PHONY: test
 test:
-	pytest -s categorical_encoding/tests
+	pytest categorical_encoding/tests
 
 .PHONY: testcoverage
 testcoverage: lint
