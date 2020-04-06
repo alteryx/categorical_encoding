@@ -7,8 +7,9 @@ jobs:
     steps:
       - checkout
       - run: |
-          virtualenv venv_35 -q
+          virtualenv venv_35
           source venv_35/bin/activate
+          pip config --site set global.progress_bar off
           make installdeps
       - run: |
           source venv_35/bin/activate
