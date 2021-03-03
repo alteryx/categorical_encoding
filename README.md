@@ -18,7 +18,7 @@ python -m pip install "featuretools[categorical_encoding]"
 python -m pip install demo-requirements.txt
 ```
 
-For more general questions regarding how to use categorical encoding in a machine learning pipeline, consult the guides located in the [categorical encoding github repository](https://github.com/FeatureLabs/categorical_encoding/tree/master/guides).
+For more general questions regarding how to use categorical encoding in a machine learning pipeline, consult the guides located in the [categorical encoding github repository](https://github.com/FeatureLabs/categorical_encoding/tree/main/guides).
 
 ```py
 >>> feature_matrix
