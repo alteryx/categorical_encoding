@@ -1,8 +1,8 @@
 from featuretools.primitives.base.transform_primitive_base import (
     TransformPrimitive
 )
-from featuretools.variable_types import Categorical, Ordinal
-
+from woodwork.column_schema import ColumnSchema
+from woodwork.logical_types import Categorical, Integer
 
 class OrdinalEnc(TransformPrimitive):
     """Applies a fitted Ordinal Encoder to the values.
@@ -23,8 +23,8 @@ class OrdinalEnc(TransformPrimitive):
         [2, 3, 1, 1]
     """
     name = "ordinal_enc"
-    input_types = [Categorical]
-    return_type = Ordinal
+    input_types = [ColumnSchema(logical_type=Categorical)]
+    return_type = [ColumnSchema(logical_type=Integer, semantic_tags={'numeric'})]
 
     def __init__(self, fitted_encoder, category):
         self.mapping = fitted_encoder.get_mapping(category)
