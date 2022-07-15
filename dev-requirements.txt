@@ -1,5 +1,5 @@
 -r test-requirements.txt
-codecov==2.0.15
+codecov==2.0.16
 flake8==3.7.0
 autopep8==1.4.3
 isort==4.3.4
