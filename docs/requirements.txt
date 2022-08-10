@@ -1,4 +1,4 @@
 git+https://github.com/FeatureLabs/categorical_encoding.git
 jupyter==1.0.0
-nbconvert==5.5.0
+nbconvert==6.3.0
 nbsphinx==0.4.2
